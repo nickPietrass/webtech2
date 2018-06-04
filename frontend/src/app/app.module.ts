@@ -7,6 +7,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { NavtopComponent } from './navtop/navtop.component';
 import { OverviewComponent } from './overview/overview.component';
 import { TodoviewComponent } from './todoview/todoview.component';
+import { TodopreviewComponent } from './todopreview/todopreview.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { TodoviewComponent } from './todoview/todoview.component';
     NavbarComponent,
     NavtopComponent,
     OverviewComponent,
-    TodoviewComponent
+    TodoviewComponent,
+    TodopreviewComponent
   ],
   imports: [
     BrowserModule
