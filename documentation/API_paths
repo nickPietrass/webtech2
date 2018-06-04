@@ -1,0 +1,27 @@
+/users
+    /login
+        POST - username + password to verify
+        returns - 200 + auth token
+                  400 - falsche daten
+                  404 - account existiert nicht
+    /register
+        POST - username + password to verify
+        returns - 200 + auth token
+                  400 - falsche daten
+                  4xx - account existiert bereits
+    /remove
+        DELETE - username + password to verify
+        returns - 200 + auth token
+                  400 - falsche daten
+/todo
+    /{UUID}
+        GET
+        returns - 200 - todo als json
+                  404 - existiert nicht
+                  401 - forbidden
+    /add
+        POST - todo als json im body + username
+        returns - 200 - ok + todo UUID
+                  4xx - errors
+    /remove
+        DELETE

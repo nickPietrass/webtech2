@@ -6,8 +6,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./todopreview.component.css']
 })
 export class TodopreviewComponent implements OnInit {
-
-  constructor() { }
+  title = '';
+  constructor() {
+    this.title = 'testing title';
+   }
 
   ngOnInit() {
   }

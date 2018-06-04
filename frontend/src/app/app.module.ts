@@ -6,8 +6,8 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { NavtopComponent } from './navtop/navtop.component';
 import { OverviewComponent } from './overview/overview.component';
-import { TodoviewComponent } from './todoview/todoview.component';
 import { TodopreviewComponent } from './todopreview/todopreview.component';
+import { TodolistComponent } from './todolist/todolist.component';
 
 
 @NgModule({
@@ -16,8 +16,8 @@ import { TodopreviewComponent } from './todopreview/todopreview.component';
     NavbarComponent,
     NavtopComponent,
     OverviewComponent,
-    TodoviewComponent,
-    TodopreviewComponent
+    TodopreviewComponent,
+    TodolistComponent
   ],
   imports: [
     BrowserModule

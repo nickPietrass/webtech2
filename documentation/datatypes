@@ -1,0 +1,27 @@
+Date: YYYY-MM-DD-hh-mm-ss 
+UUID: prefix + 64char UUID (reicht das?)
+
+Todo:{
+    uuid: todoUUID,
+    title: string,
+    content: string, // formatting in markdown/html?
+    owner: userUUID,
+    visibileBy: Array(userUUID/groupUUID/public),
+    editableBy: Array(userUUID/groupUUID), //initialized with owner
+    created: String (Date),
+}
+
+User:{
+    uuid: userUUID,
+    name: String, //login name, fixes
+    password: String, //salted password
+    displayName: String, //name for usage in UI, editable
+    created: String(Date),
+}
+
+Group:{
+    uuid: groupUUID,
+    name: String,
+    owner: String,
+    // password access?   
+}
