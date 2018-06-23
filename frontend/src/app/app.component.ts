@@ -4,7 +4,12 @@ import { Component } from '@angular/core';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
-})
+}) 
 export class AppComponent {
   title = 'app';
+  //TODO actually check this
+  isLoggedIn = false;
+  onNotify(){
+    this.isLoggedIn = true;
+  }
 }

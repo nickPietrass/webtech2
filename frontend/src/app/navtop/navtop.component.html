@@ -5,10 +5,11 @@
   <ul class="navbar-nav px-3">
     <li *ngIf="!loggedIn" class="nav-item text-nowrap">
       <input type="text" placeholder="name" />
-    <input type="password" placeholder="password" />
+      <input type="password" placeholder="password" />
+      <input type="submit" (click)="onLoginClick()"/>
     </li>
     <li *ngIf="loggedIn" class="nav-item text-nowrap">
-      <a class="nav-link" href="#">Sign out</a>
+      <a class="nav-link" href="#" (click)="onLoginClick()">Sign out</a>
     </li>
   </ul>
 </nav>

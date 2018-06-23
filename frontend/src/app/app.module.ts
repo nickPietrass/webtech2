@@ -8,6 +8,7 @@ import { NavtopComponent } from './navtop/navtop.component';
 import { OverviewComponent } from './overview/overview.component';
 import { TodopreviewComponent } from './todopreview/todopreview.component';
 import { TodolistComponent } from './todolist/todolist.component';
+import { WelcomeComponent } from './welcome/welcome.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { TodolistComponent } from './todolist/todolist.component';
     NavtopComponent,
     OverviewComponent,
     TodopreviewComponent,
-    TodolistComponent
+    TodolistComponent,
+    WelcomeComponent
   ],
   imports: [
     BrowserModule

@@ -13,4 +13,9 @@ export class NavtopComponent implements OnInit {
   ngOnInit() {
   }
 
+  onLoginClick(){
+    //TODO replace with actual check
+    this.loggedIn = !this.loggedIn;
+  }
+
 }
