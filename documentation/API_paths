@@ -1,27 +1,54 @@
-/users
-    /login
-        POST - username + password to verify
-        returns - 200 + auth token
-                  400 - falsche daten
-                  404 - account existiert nicht
-    /register
-        POST - username + password to verify
-        returns - 200 + auth token
-                  400 - falsche daten
-                  4xx - account existiert bereits
-    /remove
-        DELETE - username + password to verify
-        returns - 200 + auth token
-                  400 - falsche daten
-/todo
-    /{UUID}
-        GET
-        returns - 200 - todo als json
-                  404 - existiert nicht
-                  401 - forbidden
-    /add
-        POST - todo als json im body + username
-        returns - 200 - ok + todo UUID
-                  4xx - errors
-    /remove
-        DELETE
+/API/data/ (evtl kann man "data" entfernen, muss man testen. Aber API/data muss bleiben weil Java.)
+    /users
+        /?id={UUID}  //Notiz: noch kp ob/wie man das "/" in Java am Anfang weglassen kann.
+            GET - displayname
+            returns - 200 + publicly viewable info like displayname, ...
+                      404 - if not existing
+        ↑
+        Braucht man das?
+
+        /login
+            POST - username + password to verify
+            returns - 200 + auth token
+                      400 - falsche daten
+                      404 - account existiert nicht
+        /register
+            POST - username + password to verify
+            returns - 200 + auth token
+                      400 - falsche daten
+                      4xx - account existiert bereits
+        /remove
+            DELETE - username + password to verify
+            returns - 200 + auth token
+                      400 - falsche daten
+    /tudoos
+        /?id={UUID}
+            GET
+            returns - 200 + todo als json
+                      404 - existiert nicht //nur bei richtigem auth
+                      401 - forbidden
+        /create
+            //Note für API/JPA: Wenn die ID bereits vergeben ist, updaten statt adden.
+            POST - todo als json im body + username
+            returns - 200 - ok + todo UUID
+                      4xx - errors
+        /remove?id={UUID}
+            DELETE
+            returns - 200 - ok
+                      404 - not found
+                      401 - forbidden
+    /groups
+        /?id={UUID}
+            GET
+            returns - 200 + gruppe als json
+                      404 - existiert nicht //nur bei richtigem auth
+                      401 - forbidden
+        /create
+            POST - gruppe als json im body
+            returns - 200 - ok + group als json
+                      4xx - errors
+        /remove?id={UUID}
+            DELETE
+            returns - 200 - ok
+                      404 - not found //auth
+                      401 - forbidden //auth
