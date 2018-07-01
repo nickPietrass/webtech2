@@ -1,7 +1,7 @@
 <app-navtop></app-navtop>
 <div [ngSwitch]="isLoggedIn">
     <app-todopreview *ngSwitchCase="true"></app-todopreview>
-    <app-welcome *ngSwitchCase="false" (loggedIn)='onNotify()'></app-welcome>
+    <app-welcome *ngSwitchCase="false" (loggedIn)='onLogin()'></app-welcome>
 </div>
 
 

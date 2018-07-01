@@ -9,7 +9,7 @@ export class AppComponent {
   title = 'app';
   //TODO actually check this
   isLoggedIn = false;
-  onNotify(){
+  onLogin(){
     this.isLoggedIn = true;
   }
 }
