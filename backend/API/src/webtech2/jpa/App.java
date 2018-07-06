@@ -12,6 +12,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import webtech2.jpa.entities.User;
 import webtech2.jpa.exceptions.DuplicateDBEntryException;
@@ -88,10 +92,26 @@ public class App {
 		}
 	}
 	
+	public ArrayList<User> getAllUsers() throws NoDBEntryException {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> users = cq.from(User.class);
+		cq.select(users);
+		
+		TypedQuery<User> query = entityManager.createQuery(cq);
+		ArrayList<User> result = new ArrayList<>(query.getResultList());
+		
+		if (result.size() > 0) {
+			return result;
+		} else {
+			throw new NoDBEntryException("There aren't any users registered.");
+		}
+	}
+	
 	public ArrayList<User> getUserByDisplayName(String displayName) {
 		ArrayList<User> result = new ArrayList<>();
 		
-		
+		//ToDo
 		
 		return result;
 	}
