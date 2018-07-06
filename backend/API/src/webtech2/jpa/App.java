@@ -2,6 +2,7 @@ package webtech2.jpa;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -13,6 +14,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 import webtech2.jpa.entities.User;
+import webtech2.jpa.exceptions.DuplicateDBEntryException;
+import webtech2.jpa.exceptions.NoDBEntryException;
 
 public class App {
 	
@@ -25,21 +28,34 @@ public class App {
 		this.entityTransaction = entityManager.getTransaction();
 	}
 	
+	
+	
+	//Methods used to persist something in the DB
+	
 	/**
 	 * Persists a new user in the database. This method will check if the user is already in the database.
 	 * @param user new user to be added to the database.
+	 * @throws DuplicateDBEntryException if the given user's UUID already exists.
 	 */
-	public void registerNewUser(User user) {
+	public void registerNewUser(User user) throws DuplicateDBEntryException{
 		//Checks if the user is already in the DB via the userUUID
 		if (entityManager.find(User.class, user.getUserUUID()).equals(null) ) {
-			persist((Entity) user);
+			persist(user);
+		} else {
+			throw new DuplicateDBEntryException("User already exists");
 		}
 	}
 	
+	/**
+	 * Persists a new user in the database and gives it a new UUID.
+	 * @param loginName loginname of the user
+	 * @param password password of the user
+	 * @param displayName displayname of the user
+	 */
 	public void registerNewUser(String loginName, String password, String displayName) {
 		User user = new User();
 		UUID userUUID = UUID.randomUUID();
-		DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD-hh-mm-ss");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
 		Date date = Calendar.getInstance().getTime();
 		String created = dateFormat.format(date);
 		
@@ -52,15 +68,37 @@ public class App {
 		persist(user);
 	}
 	
+	
+	
+	//Methods used to get something from the DB
+	
 	/**
 	 * Returns a user by his userUUID.
 	 * @param userUUID userUUID.
-	 * @return user if the user with the userUUID is in the database, null else.
+	 * @return user if the user with the userUUID is in the database.
+	 * @throws NoDBEntryException if the given userUUID and its user does not exists.
 	 */
-	public User getUserById(UUID userUUID) {
+	public User getUserById(UUID userUUID) throws NoDBEntryException {
 		User user = entityManager.find(User.class, userUUID);
-		return user;
+		
+		if (user == null) {
+			throw new NoDBEntryException("There exists no user with the given UUID: " + userUUID);
+		} else {
+			return user;
+		}
 	}
+	
+	public ArrayList<User> getUserByDisplayName(String displayName) {
+		ArrayList<User> result = new ArrayList<>();
+		
+		
+		
+		return result;
+	}
+	
+	
+	
+	//Helper methods
 	
 	/**
 	 * Helper function to persist an entity in the database. This method does not check for duplicates.
