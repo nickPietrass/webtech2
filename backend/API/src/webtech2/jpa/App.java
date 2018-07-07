@@ -15,6 +15,7 @@ import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import webtech2.jpa.entities.User;
@@ -74,6 +75,12 @@ public class App {
 	
 	
 	
+	//Methods used to update something from the DB
+	
+	
+	
+	
+	
 	//Methods used to get something from the DB
 	
 	/**
@@ -92,6 +99,11 @@ public class App {
 		}
 	}
 	
+	/**
+	 * Returns a list of all users.
+	 * @return users all users.
+	 * @throws NoDBEntryException if there aren't any users registered.
+	 */
 	public ArrayList<User> getAllUsers() throws NoDBEntryException {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<User> cq = cb.createQuery(User.class);
@@ -108,6 +120,12 @@ public class App {
 		}
 	}
 	
+	/**
+	 * Returns a list of all users with the given display name.
+	 * @param displayName display name to search for.
+	 * @return users with the given display name.
+	 * @throws NoDBEntryException if there aren't any users with the given display name.
+	 */
 	public ArrayList<User> getUsersByDisplayName(String displayName) throws NoDBEntryException{
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<User> cq = cb.createQuery(User.class);
@@ -121,6 +139,34 @@ public class App {
 			return result;
 		} else {
 			throw new NoDBEntryException("The user(s) with the given display name: " + displayName + " do(es) not exist.");
+		}
+	}
+	
+	/**
+	 * Returns a User with the given loginName and password.
+	 * @param loginName loginName of the user.
+	 * @param password password of the user.
+	 * @return result a user if it exists.
+	 * @throws NoDBEntryException if the user with the given loginName and password does not exist.
+	 */
+	public User getUserByLoginNameAndPassword(String loginName, String password) throws NoDBEntryException {
+		//create criteria
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> user = cq.from(User.class);
+		
+		//set the predicate
+		Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
+		
+		//select
+		cq.select(user).where(loginNameAndPasswordMatches);
+		TypedQuery<User> query = entityManager.createQuery(cq);
+		User result = query.getResultList().get(0);
+		
+		if (result != null) {
+			return result;
+		} else {
+			throw new NoDBEntryException("The user with the given loginName and password does not exist.");
 		}
 	}
 	
