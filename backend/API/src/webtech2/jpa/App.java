@@ -24,13 +24,10 @@ import webtech2.jpa.exceptions.NoDBEntryException;
 
 public class App {
 	
-	private EntityManager entityManager;
-	private EntityTransaction entityTransaction;
+	private EntityManagerFactory emf;
 	
 	public App() {
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("tudoo-persistence-unit");
-		this.entityManager = emf.createEntityManager();
-		this.entityTransaction = entityManager.getTransaction();
+		this.emf = Persistence.createEntityManagerFactory("tudoo-persistence-unit");
 	}
 	
 	
@@ -43,8 +40,10 @@ public class App {
 	 * @throws DuplicateDBEntryException if the given user's UUID already exists.
 	 */
 	public void registerNewUser(User user) throws DuplicateDBEntryException{
+		EntityManager em = emf.createEntityManager();
+		
 		//Checks if the user is already in the DB via the userUUID
-		if (entityManager.find(User.class, user.getUserUUID()).equals(null) ) {
+		if (em.find(User.class, user.getUserUUID()).equals(null) ) {
 			persist(user);
 		} else {
 			throw new DuplicateDBEntryException("User already exists");
@@ -75,7 +74,7 @@ public class App {
 	
 	
 	
-	//Methods used to update something from the DB
+	//Methods used to update an entry in the DB
 	
 	
 	
@@ -90,7 +89,10 @@ public class App {
 	 * @throws NoDBEntryException if the given userUUID and its user does not exists.
 	 */
 	public User getUserById(UUID userUUID) throws NoDBEntryException {
-		User user = entityManager.find(User.class, userUUID);
+		EntityManager em = emf.createEntityManager();
+		
+		User user = em.find(User.class, userUUID);
+		em.close();
 		
 		if (user == null) {
 			throw new NoDBEntryException("There exists no user with the given UUID: " + userUUID);
@@ -105,13 +107,16 @@ public class App {
 	 * @throws NoDBEntryException if there aren't any users registered.
 	 */
 	public ArrayList<User> getAllUsers() throws NoDBEntryException {
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		EntityManager em = emf.createEntityManager();
+		
+		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<User> cq = cb.createQuery(User.class);
 		Root<User> users = cq.from(User.class);
 		cq.select(users);
 		
-		TypedQuery<User> query = entityManager.createQuery(cq);
+		TypedQuery<User> query = em.createQuery(cq);
 		ArrayList<User> result = new ArrayList<>(query.getResultList());
+		em.close();
 		
 		if (result.size() > 0) {
 			return result;
@@ -127,13 +132,16 @@ public class App {
 	 * @throws NoDBEntryException if there aren't any users with the given display name.
 	 */
 	public ArrayList<User> getUsersByDisplayName(String displayName) throws NoDBEntryException{
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		EntityManager em = emf.createEntityManager();
+		
+		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<User> cq = cb.createQuery(User.class);
 		Root<User> users = cq.from(User.class);
 		cq.select(users).where(cb.equal(users.get("displayName"), displayName));
 		
-		TypedQuery<User> query = entityManager.createQuery(cq);
+		TypedQuery<User> query = em.createQuery(cq);
 		ArrayList<User> result = new ArrayList<>(query.getResultList());
+		em.close();
 		
 		if (result.size() > 0) {
 			return result;
@@ -150,8 +158,10 @@ public class App {
 	 * @throws NoDBEntryException if the user with the given loginName and password does not exist.
 	 */
 	public User getUserByLoginNameAndPassword(String loginName, String password) throws NoDBEntryException {
+		EntityManager em = emf.createEntityManager();
+		
 		//create criteria
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<User> cq = cb.createQuery(User.class);
 		Root<User> user = cq.from(User.class);
 		
@@ -160,8 +170,9 @@ public class App {
 		
 		//select
 		cq.select(user).where(loginNameAndPasswordMatches);
-		TypedQuery<User> query = entityManager.createQuery(cq);
+		TypedQuery<User> query = em.createQuery(cq);
 		User result = query.getResultList().get(0);
+		em.close();
 		
 		if (result != null) {
 			return result;
@@ -172,6 +183,13 @@ public class App {
 	
 	
 	
+	//Methods used to delete an entry in the DB
+	
+	public void deleteUser(String loginName, String password) {
+		
+	}
+	
+	
 	//Helper methods
 	
 	/**
@@ -179,8 +197,12 @@ public class App {
 	 * @param entity some entity that needs to be persisted.
 	 */
 	private void persist(Object entity) {
-		entityTransaction.begin();
-		entityManager.persist(entity);
-		entityTransaction.commit();
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		
+		tx.begin();
+		em.persist(entity);
+		tx.commit();
+		em.close();
 	}
 }
