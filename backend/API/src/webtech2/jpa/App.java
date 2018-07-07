@@ -14,6 +14,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -185,8 +186,31 @@ public class App {
 	
 	//Methods used to delete an entry in the DB
 	
+	/**
+	 * Deletes a user from the DB.
+	 * @param loginName the users loginName.
+	 * @param password the users password.
+	 */
 	public void deleteUser(String loginName, String password) {
+		EntityManager em = emf.createEntityManager();
+    	
+    	//create criteria delete
+    	CriteriaBuilder cb = em.getCriteriaBuilder();
+    	CriteriaDelete<User> cd = cb.createCriteriaDelete(User.class);
+    	Root<User> user = cd.from(User.class);
+    	
+    	//set predicate
+		Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
 		
+		//select
+		cd.where(loginNameAndPasswordMatches);
+		
+		//delete
+		EntityTransaction tx = em.getTransaction();
+		tx.begin();
+		em.createQuery(cd).executeUpdate();
+		tx.commit();
+		em.close();
 	}
 	
 	
