@@ -108,12 +108,20 @@ public class App {
 		}
 	}
 	
-	public ArrayList<User> getUserByDisplayName(String displayName) {
-		ArrayList<User> result = new ArrayList<>();
+	public ArrayList<User> getUsersByDisplayName(String displayName) throws NoDBEntryException{
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> users = cq.from(User.class);
+		cq.select(users).where(cb.equal(users.get("displayName"), displayName));
 		
-		//ToDo
+		TypedQuery<User> query = entityManager.createQuery(cq);
+		ArrayList<User> result = new ArrayList<>(query.getResultList());
 		
-		return result;
+		if (result.size() > 0) {
+			return result;
+		} else {
+			throw new NoDBEntryException("The user(s) with the given display name: " + displayName + " do(es) not exist.");
+		}
 	}
 	
 	
