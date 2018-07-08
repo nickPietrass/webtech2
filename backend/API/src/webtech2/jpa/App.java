@@ -16,6 +16,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -77,7 +78,33 @@ public class App {
 	
 	//Methods used to update an entry in the DB
 	
-	
+	/**
+	 * Changes the user display name.
+	 * @param loginName login of the user.
+	 * @param password password of the user.
+	 * @param newDisplayName new display name for the user.
+	 */
+	public void changeUserDisplayName(String loginName, String password, String newDisplayName) {
+		//create update
+		EntityManager em = emf.createEntityManager();
+    	CriteriaBuilder cb = em.getCriteriaBuilder();
+    	CriteriaUpdate<User> update = cb.createCriteriaUpdate(User.class);
+    	
+    	//set the root class
+    	Root<User> user = update.from(User.class);
+    	
+    	//set the update and where clause
+    	update.set("displayName", newDisplayName);
+    	Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
+    	update.where(loginNameAndPasswordMatches);
+    	
+    	//change displayName
+    	EntityTransaction tx = em.getTransaction();
+    	tx.begin();
+    	em.createQuery(update).executeUpdate();
+    	tx.commit();
+    	em.close();
+	}
 	
 	
 	
