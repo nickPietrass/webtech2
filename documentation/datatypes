@@ -1,8 +1,8 @@
 Date: YYYY-MM-DD-hh-mm-ss 
 UUID: prefix + 64char UUID (reicht das?)
 
-Todo:{
-    uuid: todoUUID,
+Tudoo:{
+    uuid: tudooUUID,
     title: string,
     content: string, // formatting in markdown/html?
     owner: userUUID,
