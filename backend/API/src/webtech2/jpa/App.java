@@ -106,6 +106,78 @@ public class App {
     	em.close();
 	}
 	
+	/**
+	 * Changes the user login name. This method will check if the new login name is already taken.
+	 * @param loginName old login name.
+	 * @param password password of the user.
+	 * @param newLoginName new login name.
+	 * @throws DuplicateDBEntryException if the new login name already exists.
+	 */
+	public void changeUserLoginName(String loginName, String password, String newLoginName) throws DuplicateDBEntryException {
+		//check if the login name is already taken
+		EntityManager em = emf.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> users = cq.from(User.class);
+		cq.select(users).where(cb.equal(users.get("loginName"), newLoginName));
+		
+		TypedQuery<User> query = em.createQuery(cq);
+		ArrayList<User> result = new ArrayList<>(query.getResultList());
+		em.close();
+		
+		if (result.size() > 0) {
+			throw new DuplicateDBEntryException("Error setting new login name");
+		}
+		
+		//create update
+		em = emf.createEntityManager();
+    	cb = em.getCriteriaBuilder();
+    	CriteriaUpdate<User> update = cb.createCriteriaUpdate(User.class);
+    	
+    	//set the root class
+    	Root<User> user = update.from(User.class);
+    	
+    	//set the update and where clause
+    	update.set("displayName", newLoginName);
+    	Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
+    	update.where(loginNameAndPasswordMatches);
+    	
+    	//change displayName
+    	EntityTransaction tx = em.getTransaction();
+    	tx.begin();
+    	em.createQuery(update).executeUpdate();
+    	tx.commit();
+    	em.close();
+	}
+	
+	/**
+	 * Changes the user password.
+	 * @param loginName login name of the user.
+	 * @param password old password of the user.
+	 * @param newPassword new password of the user.
+	 */
+	public void changeUserPassword(String loginName, String password, String newPassword) {
+		//create update
+		EntityManager em = emf.createEntityManager();
+    	CriteriaBuilder cb = em.getCriteriaBuilder();
+    	CriteriaUpdate<User> update = cb.createCriteriaUpdate(User.class);
+    	
+    	//set the root class
+    	Root<User> user = update.from(User.class);
+    	
+    	//set the update and where clause
+    	update.set("password", newPassword);
+    	Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
+    	update.where(loginNameAndPasswordMatches);
+    	
+    	//change displayName
+    	EntityTransaction tx = em.getTransaction();
+    	tx.begin();
+    	em.createQuery(update).executeUpdate();
+    	tx.commit();
+    	em.close();
+	}
+	
 	
 	
 	//Methods used to get something from the DB
