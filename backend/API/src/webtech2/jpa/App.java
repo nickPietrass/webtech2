@@ -54,11 +54,15 @@ public class App {
 	
 	/**
 	 * Persists a new user in the database and gives it a new UUID.
-	 * @param loginName loginname of the user
+	 * @param loginName login name of the user
 	 * @param password password of the user
-	 * @param displayName displayname of the user
+	 * @param displayName display name of the user
 	 */
-	public void registerNewUser(String loginName, String password, String displayName) {
+	public void registerNewUser(String loginName, String password, String displayName) throws DuplicateDBEntryException {
+		if (loginNameIsAlreadyTaken(loginName)) {
+			throw new DuplicateDBEntryException("Login name already taken");
+		}
+		
 		User user = new User();
 		UUID userUUID = UUID.randomUUID();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
@@ -114,24 +118,13 @@ public class App {
 	 * @throws DuplicateDBEntryException if the new login name already exists.
 	 */
 	public void changeUserLoginName(String loginName, String password, String newLoginName) throws DuplicateDBEntryException {
-		//check if the login name is already taken
-		EntityManager em = emf.createEntityManager();
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<User> cq = cb.createQuery(User.class);
-		Root<User> users = cq.from(User.class);
-		cq.select(users).where(cb.equal(users.get("loginName"), newLoginName));
-		
-		TypedQuery<User> query = em.createQuery(cq);
-		ArrayList<User> result = new ArrayList<>(query.getResultList());
-		em.close();
-		
-		if (result.size() > 0) {
+		if (loginNameIsAlreadyTaken(newLoginName)) {
 			throw new DuplicateDBEntryException("Error setting new login name");
 		}
 		
 		//create update
-		em = emf.createEntityManager();
-    	cb = em.getCriteriaBuilder();
+		EntityManager em = emf.createEntityManager();
+    	CriteriaBuilder cb = em.getCriteriaBuilder();
     	CriteriaUpdate<User> update = cb.createCriteriaUpdate(User.class);
     	
     	//set the root class
@@ -314,6 +307,26 @@ public class App {
 	
 	
 	//Helper methods
+	
+	/**
+	 * Checks if the login name is already taken.
+	 * @param loginName search for that login name.
+	 * @return true if it is taken, false else.
+	 */
+	private boolean loginNameIsAlreadyTaken(String loginName) {
+		//check if the login name is already taken
+		EntityManager em = emf.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> users = cq.from(User.class);
+		cq.select(users).where(cb.equal(users.get("loginName"), loginName));
+		
+		TypedQuery<User> query = em.createQuery(cq);
+		ArrayList<User> result = new ArrayList<>(query.getResultList());
+		em.close();
+		
+		return result.size() > 0;
+	}
 	
 	/**
 	 * Helper function to persist an entity in the database. This method does not check for duplicates.
