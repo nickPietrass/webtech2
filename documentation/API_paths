@@ -47,6 +47,16 @@
             POST - gruppe als json im body
             returns - 200 - ok + group als json
                       4xx - errors
+        /adduser?groupid={UUID}&userid={UUID}
+        	PUT
+        	returns - 200 - ok + group als json
+        			  401 - forbidden, keine Rechte für die Gruppe
+        			  404 - gruppe/user existiert nicht (mit reason string)
+        /removeuser?groupid={UUID}&userid={UUID}
+        	PUT
+        	returns - 200 - ok + group als json
+        	          401 - forbidden, keine Rechte für die Gruppe
+        	          404 - gruppe/user existiert nicht (mit reason string)
         /remove?id={UUID}
             DELETE
             returns - 200 - ok
