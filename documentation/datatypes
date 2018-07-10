@@ -12,8 +12,7 @@ Tudoo:{
 }
 
 User:{
-    uuid: userUUID,
-    name: String, //login name, fixes
+    name: String, //login name, unique(id), fixes
     password: String, //salted password
     displayName: String, //name for usage in UI, editable
     created: String(Date),
@@ -22,6 +21,5 @@ User:{
 Group:{
     uuid: groupUUID,
     name: String,
-    owner: String,
-    // password access?   
+    owner: String 
 }
