@@ -17,7 +17,7 @@ import webtech2.rest.storage.SerializableGroup;
 /**
  * Created by Ilja on 26.06.2018.
  */
-@ApplicationPath("/data")
+@ApplicationPath("/api")
 @Path("/groups")
 public class Groups extends Application{
 

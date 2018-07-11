@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 /**
  * Created by Ilja on 26.06.2018.
  */
-@ApplicationPath("/data")
+@ApplicationPath("/api")
 @Path("/tudoos")
 public class Tudoos extends Application{
 
