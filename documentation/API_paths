@@ -4,24 +4,24 @@
 
 /api
     /users
-        ?id={loginName}  //Notiz: noch kp ob/wie man das "/" in Java am Anfang weglassen kann.
+        ?id={loginName}  //Notiz: evtl /? nötig
             GET
             returns - 200 + publicly viewable info like displayname, created date. (currently those two)
                       404 - nicht gefunden
         /login
-            POST - username + password
+            POST - loginName:"string",password:"string"
             returns - 200 + neue sessionID (auch wenn user schon eingeloggt)
                       400 - falsche daten
         /register
-            POST - username + password
+            POST - loginName:"string",password:"string",displayName:"string",created:"string timestamp"
             returns - 200 + sessionID
                       400 - username vergeben oder passwort unzulässig (returnt keinen string, clientside checken was das Problem ist)
         /editUsername
-            PUT - sessionID:"string" + newName:"string"
+            PUT - sessionID:"string",newName:"string"
             returns - 200 - ok
                       400 - sessionID ungültig/inexistent
         /editPassword
-            PUT - sessionID:"string" + newPassword:"string"
+            PUT - sessionID:"string",newPassword:"string"
             returns - 200 - ok
                       400 - sessionID ungültig/inexistent
         /remove
