@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 public class Tudoos extends Application{
 
     @GET
-    @Path("/") //geht auch ""?
+    @Path("/get") //geht auch ""?
     @Produces(MediaType.APPLICATION_JSON)
     public Object getUser(@QueryParam("id") String id){
         //Call to JPA with id.
@@ -45,7 +45,7 @@ public class Tudoos extends Application{
      * @return 200 if possible, 400 else.
      */
     @PUT
-    @Path("/updatePermission")
+    @Path("/updatePermission") //TODO wrong!
     public Response updatePermission(@QueryParam("tudooID") String tudooID, @QueryParam("targetID") String targetID, @QueryParam("permissionLevel") String permLevel) {
     	return Response.ok("").build();
     }

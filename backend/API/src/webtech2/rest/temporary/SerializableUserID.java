@@ -1,4 +1,4 @@
-package webtech2.rest.storage;
+package webtech2.rest.temporary;
 
 /**
  * Temporary storage for HTTP body data of a login/register request.
@@ -13,7 +13,6 @@ public class SerializableUserID {
 	public SerializableUserID() {}
 
 	public SerializableUserID(String username, String password) {
-		super();
 		this.username = username;
 		this.password = password;
 	}

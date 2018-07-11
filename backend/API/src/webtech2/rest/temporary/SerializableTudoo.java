@@ -1,4 +1,4 @@
-package webtech2.rest.storage;
+package webtech2.rest.temporary;
 
 /**
  * Simple serializable TuDoo represenation with primitive types only

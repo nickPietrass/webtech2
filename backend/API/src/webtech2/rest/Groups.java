@@ -12,7 +12,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import webtech2.rest.storage.SerializableGroup;
+import webtech2.rest.temporary.SerializableGroup;
 
 /**
  * Created by Ilja on 26.06.2018.
@@ -22,7 +22,7 @@ import webtech2.rest.storage.SerializableGroup;
 public class Groups extends Application{
 
     @GET
-    @Path("/") //geht auch ""?
+    @Path("/get") //geht auch ""?
     @Produces(MediaType.APPLICATION_JSON)
     public Object getUser(@QueryParam("id") String id){
         //Call to JPA with id.
@@ -36,17 +36,23 @@ public class Groups extends Application{
     }
     
     @PUT
-    @Path("/adduser")
+    @Path("/addUser")
     public SerializableGroup addUserToGroup() {
     	// jpa
     	return new SerializableGroup();
     }
     
-    @PUT
-    @Path("/removeuser")
+    @DELETE
+    @Path("/removeUser")
     public SerializableGroup removeUserFromGroup() {
     	// jpa
     	return new SerializableGroup();
+    }
+    
+    @PUT
+    @Path("/getUserGroups")
+    public SerializableGroup[] getUserGroups(@QueryParam("id") String loginName){
+    	return null;
     }
     
     @DELETE

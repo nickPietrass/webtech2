@@ -13,10 +13,9 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import webtech2.rest.storage.PasswordChange;
-import webtech2.rest.storage.SerializableUser;
-import webtech2.rest.storage.SerializableUserID;
-import webtech2.rest.storage.UsernameChange;
+import webtech2.rest.temporary.SerializableUser;
+import webtech2.rest.temporary.SerializableUserID;
+import webtech2.rest.temporary.params.SerializableParam;
 
 /**
  * Created by Ilja on 26.06.2018.
@@ -26,7 +25,7 @@ import webtech2.rest.storage.UsernameChange;
 public class Users extends Application{
 
     @GET
-    @Path("/") //geht auch ""?
+    @Path("/get") //geht auch ""?
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(SerializableUserID idObject, @QueryParam("id") String id){
         //Call to JPA with id.
@@ -49,15 +48,15 @@ public class Users extends Application{
     }
 
     @PUT
-    @Path("/editUsername")
-    public Response editUsername(UsernameChange changeObject){
+    @Path("/editDisplayName")
+    public Response editDisplayName(SerializableParam changeObject){
     	//return Response.ok().build(); //if it was changed
         return Response.status(400).build(); //if changeObject.sessionID bad
     }
     
     @PUT
     @Path("/editPassword")
-    public Response editPassword(PasswordChange changeObject){
+    public Response editPassword(SerializableParam changeObject){
     	//return Response.ok().build(); //if it was changed
         return Response.status(400).build(); //if changeObject.sessionID bad
     }

@@ -1,4 +1,4 @@
-package webtech2.rest.storage;
+package webtech2.rest.temporary;
 
 /**
  * Simple serializable group represenation with primitive types only
@@ -9,6 +9,7 @@ public class SerializableGroup {
 		private String groupUUID;
 		private String groupName;
 		private String groupOwnerLoginName;
+		private String[] userLoginNames;
 		
 		/**
 		 * Empty constructor for Jax-RS.
@@ -21,10 +22,11 @@ public class SerializableGroup {
 		 * @param groupName Name of the Group.
 		 * @param groupOwnerLoginName Login name of the owner of the group (which happens to be the uuid of the owner).
 		 */
-		public SerializableGroup(String groupUUID, String groupName, String groupOwnerLoginName) {
+		public SerializableGroup(String groupUUID, String groupName, String groupOwnerLoginName, String[] userLoginNames) {
 			this.groupUUID = groupUUID;
 			this.groupName = groupName;
 			this.groupOwnerLoginName = groupOwnerLoginName;
+			this.userLoginNames = userLoginNames;
 		}
 		
 		public String getGroupUUID() {
@@ -36,6 +38,9 @@ public class SerializableGroup {
 		public String getGroupOwner() {
 			return groupOwnerLoginName;
 		}
+		public String[] getUserLoginNames() {
+			return userLoginNames;
+		}
 		
 		public void setGroupUUID(String groupUUID) {
 			this.groupUUID = groupUUID;
@@ -45,6 +50,9 @@ public class SerializableGroup {
 		}
 		public void setGroupOwner(String groupOwner) {
 			this.groupOwnerLoginName = groupOwner;
+		}
+		public void setUserLoginNames(String[] userLoginNames) {
+			this.userLoginNames = userLoginNames;
 		}
 
 }

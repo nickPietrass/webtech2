@@ -1,4 +1,4 @@
-package webtech2.rest.storage;
+package webtech2.rest.temporary;
 
 /**
  * Simple serializable user represenation with primitive types only
@@ -6,7 +6,7 @@ package webtech2.rest.storage;
  */
 public class SerializableUser {
 	
-		private String userUUID; //which is his loginName
+		private String loginName; //which is his UUID
 		private String password; //hashed pw
 		private String displayName;
 		private String created;
@@ -21,14 +21,14 @@ public class SerializableUser {
 		 * @param password Hashed PW. 
 		 */
 		public SerializableUser(String userUUID, String password, String displayName, String created) {
-			this.userUUID = userUUID;
+			this.loginName = userUUID;
 			this.password = password;
 			this.displayName = displayName;
 			this.created = created;
 		}
 		
 		public String getUserUUID() {
-			return userUUID;
+			return loginName;
 		}
 		public String getPassword() {
 			return password;
@@ -41,7 +41,7 @@ public class SerializableUser {
 		}
 		
 		public void setGroupUUID(String groupUUID) {
-			this.userUUID = groupUUID;
+			this.loginName = groupUUID;
 		}
 		public void setPassword(String password) {
 			this.password = password;
