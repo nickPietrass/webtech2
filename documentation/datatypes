@@ -21,5 +21,6 @@ User:{
 Group:{
     uuid: groupUUID,
     name: String,
-    owner: String 
+    owner: String,
+    userList: Array
 }
