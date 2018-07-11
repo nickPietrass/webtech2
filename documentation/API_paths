@@ -1,22 +1,31 @@
-/API/data/ (evtl kann man "data" entfernen, muss man testen. Aber API/data muss bleiben weil Java.)
-    /users
-        /?id={UUID}  //Notiz: noch kp ob/wie man das "/" in Java am Anfang weglassen kann.
-            GET - displayname
-            returns - 200 + publicly viewable info like displayname, ...
-                      404 - if not existing
-        ↑
-        Braucht man das?
+/ping
+    GET
+    returns - 200 + "Pong!"
 
+/api
+    /users
+        ?id={loginName}  //Notiz: noch kp ob/wie man das "/" in Java am Anfang weglassen kann.
+            GET
+            returns - 200 + publicly viewable info like displayname, created date. (currently those two)
+                      404 - nicht gefunden
         /login
-            POST - username + password to verify
-            returns - 200 + auth token
+            POST - username + password
+            returns - 200 + neue sessionID (auch wenn user schon eingeloggt)
                       400 - falsche daten
-                      404 - account existiert nicht
         /register
-            POST - username + password to verify
-            returns - 200 + auth token
+            POST - username + password
+            returns - 200 + sessionID
+                      400 - username vergeben oder passwort unzulässig (returnt keinen string, clientside checken was das Problem ist)
+        /editUsername
+            PUT - sessionID:"string" + newName:"string"
+            returns - 200 - ok
                       400 - falsche daten
-                      4xx - account existiert bereits
+                      404 - sessionID ungültig/inexistent
+        /editPassword
+            PUT - sessionID:"string" + newPassword:"string"
+            returns - 200 - ok
+                      400 - falsche daten
+                      404 - sessionID ungültig/inexistent
         /remove
             DELETE - username + password to verify
             returns - 200 + auth token
@@ -25,40 +34,35 @@
         /?id={UUID}
             GET
             returns - 200 + todo als json
-                      404 - existiert nicht //nur bei richtigem auth
-                      401 - forbidden
+                      404 - existiert nicht //egal ob Zugang verboten oder nicht existent.
         /create
             //Note für API/JPA: Wenn die ID bereits vergeben ist, updaten statt adden.
             POST - todo als json im body + username
             returns - 200 - ok + todo UUID
-                      4xx - errors
+                      400 - errors
         /remove?id={UUID}
             DELETE
             returns - 200 - ok
                       404 - not found
-                      401 - forbidden
+                      403 - forbidden //wenn leseberechtigung da, aber kein editrecht
     /groups
         /?id={UUID}
             GET
             returns - 200 + gruppe als json
-                      404 - existiert nicht //nur bei richtigem auth
-                      401 - forbidden
+                      404 - existiert nicht //egal ob Zugang verboten oder nicht existent.
         /create
             POST - gruppe als json im body
             returns - 200 - ok + group als json
-                      4xx - errors
+                      400 - "Fehler beim erstellen"
         /adduser?groupid={UUID}&userid={UUID}
         	PUT
         	returns - 200 - ok + group als json
-        			  401 - forbidden, keine Rechte für die Gruppe
-        			  404 - gruppe/user existiert nicht (mit reason string)
+        			  404 - gruppe/user existiert nicht (mit reason string) //kein 401/403, da man fremde Gruppen nicht sehen soll
         /removeuser?groupid={UUID}&userid={UUID}
         	PUT
         	returns - 200 - ok + group als json
-        	          401 - forbidden, keine Rechte für die Gruppe
         	          404 - gruppe/user existiert nicht (mit reason string)
         /remove?id={UUID}
             DELETE
             returns - 200 - ok
-                      404 - not found //auth
-                      401 - forbidden //auth
+                      404 - not found //egal ob Zugang verboten oder nicht existent.
