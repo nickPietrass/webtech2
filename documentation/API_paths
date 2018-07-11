@@ -19,17 +19,15 @@
         /editUsername
             PUT - sessionID:"string" + newName:"string"
             returns - 200 - ok
-                      400 - falsche daten
-                      404 - sessionID ungültig/inexistent
+                      400 - sessionID ungültig/inexistent
         /editPassword
             PUT - sessionID:"string" + newPassword:"string"
             returns - 200 - ok
-                      400 - falsche daten
-                      404 - sessionID ungültig/inexistent
+                      400 - sessionID ungültig/inexistent
         /remove
-            DELETE - username + password to verify
+            DELETE - sessionID
             returns - 200 + auth token
-                      400 - falsche daten
+                      400 - sessionID ungültig/inexistent
     /tudoos
         /?id={UUID}
             GET
