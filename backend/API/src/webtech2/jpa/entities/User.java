@@ -3,12 +3,14 @@ package webtech2.jpa.entities;
 import java.util.UUID;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class User {
 	
 	@Id
+	@GeneratedValue
 	private UUID userUUID;
 	
 	private String loginName;
