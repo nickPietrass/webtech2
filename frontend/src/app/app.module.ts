@@ -9,6 +9,10 @@ import { OverviewComponent } from './overview/overview.component';
 import { TodopreviewComponent } from './todopreview/todopreview.component';
 import { TodolistComponent } from './todolist/todolist.component';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { ProfileComponent } from './profile/profile.component';
+import { GrouplistComponent } from './grouplist/grouplist.component';
+import { CreditsComponent } from './credits/credits.component';
+import { TodonewComponent } from './todonew/todonew.component';
 
 
 @NgModule({
@@ -19,7 +23,11 @@ import { WelcomeComponent } from './welcome/welcome.component';
     OverviewComponent,
     TodopreviewComponent,
     TodolistComponent,
-    WelcomeComponent
+    WelcomeComponent,
+    ProfileComponent,
+    GrouplistComponent,
+    CreditsComponent,
+    TodonewComponent
   ],
   imports: [
     BrowserModule

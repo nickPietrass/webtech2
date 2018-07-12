@@ -1,0 +1,15 @@
+<div class="col-md-9">
+ <h2>All todos</h2>
+ <div>
+  <h3>Filters go here</h3>
+ </div>
+
+ <button (click)="new = true">Create New</button>
+ 
+ <app-todonew *ngIf="new" (submit)="onNewSubmit()"></app-todonew>
+ <ul class="card-columns">
+  <div *ngFor="let todo of todos">
+   <app-todopreview id="todo.id" name="todo.name"></app-todopreview>
+  </div>
+ </ul>
+</div>

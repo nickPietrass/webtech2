@@ -1,19 +1,27 @@
-<app-navtop></app-navtop>
-<div [ngSwitch]="isLoggedIn">
-    <app-todopreview *ngSwitchCase="true"></app-todopreview>
-    <app-welcome *ngSwitchCase="false" (loggedIn)='onLogin()'></app-welcome>
+<app-navtop (onSearch)='onSearch()'></app-navtop>
+<div class="row">
+    <app-navbar (pageChange)='onPageChange($event)'></app-navbar>
+    <main class="col-md-8">
+        <div [ngSwitch]="currentPage" class="no-float">
+            <!--<app-todopreview *ngSwitchCase="'home'"></app-todopreview>-->
+            <app-welcome *ngSwitchCase="'login'" (loggedIn)='onLogin()'></app-welcome>
+            <app-profile *ngSwitchCase="'profile'"></app-profile>
+            <app-todolist *ngSwitchCase="'todos'"></app-todolist>
+            <app-grouplist *ngSwitchCase="'groups'"></app-grouplist>
+            <app-credits *ngSwitchCase="'credits'"></app-credits>
+            <div *ngSwitchDefault>Stuff Broke.</div>
+        </div>
+    </main>
+
 </div>
-
-
 
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
 <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
 <script src="../../../../assets/js/vendor/popper.min.js"></script>
 <script src="../../../../dist/js/bootstrap.min.js"></script>
-
-
-
-
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>

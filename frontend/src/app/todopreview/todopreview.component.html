@@ -1,4 +1,27 @@
-<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-<h3>{{title}}</h3>
-</main>
-<app-navbar></app-navbar>
+<div [ngSwitch]="viewMode" class="card">
+ <div *ngSwitchCase="'minimized'" class="card-body">
+  <h4 class="card-title"> {{todo.name}}</h4>
+  <button (click)="viewMode = 'maximized'">Expand</button>
+ </div>
+ <div *ngSwitchCase="'maximized'" class="card-body">
+   <h4 class="card-title"> {{todo.name}}</h4>
+  <p> {{todo.content}}</p>
+  <p> visibleby and other dropdowns here</p>
+  <div>
+   <button (click)="viewMode = 'minimized'">Minimize</button>
+   <button (click)="viewMode = 'edit'">edit</button>
+
+  </div>
+ </div>
+ <div *ngSwitchCase="'edit'" class="card-body">
+   <h4 class="card-title"> Editing: {{todo.name}}</h4>
+  <p> {{todo.name}}</p>
+  <p> {{todo.content}}</p>
+  <p> visibleby and other dropdowns here</p>
+  <div>
+   <p> function buttons </p>
+   <button (click)="viewMode = 'maximized'">Cancel</button>
+   <button (click)="onEdit()">Submit Changes</button>
+  </div>
+ </div>
+</div>

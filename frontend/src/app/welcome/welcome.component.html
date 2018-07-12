@@ -1,4 +1,38 @@
-<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
- Login pls
- <button (click)="login()">Login Mockup</button>
-</main>
+<div class="col-md-4">
+ <div class="card">
+  <div class="card-body">
+   <h3 class="card-title">Login</h3>
+   <div class="list-group list-group-flush">
+    <li class="list-group-item">
+     <a>Username:</a>
+     <input type="text" #loginName/>
+    </li>
+    <li class="list-group-item">
+      <a>Password: </a>
+     <input type="password" #loginPass/>
+    </li>
+   </div>
+   <button (click)="login(loginName.value, loginPass.value)" class ="btn btn-primary">Login</button>
+
+  </div>
+ </div>
+</div>
+<div class="col-md-4">
+  <div class="card">
+    <div class="card-body">
+     <h3 class="card-title">Register a new account</h3>
+     <div class="list-group list-group-flush">
+      <li class="list-group-item">
+       <a>Username:</a>
+       <input type="text" #loginName/>
+      </li>
+      <li class="list-group-item">
+        <a>Password: </a>
+       <input type="password" #loginPass/>
+      </li>
+     </div>
+     <button (click)="login(loginName.value, loginPass.value)" class = "btn btn-primary">Register</button>
+  
+    </div>
+   </div>
+</div>

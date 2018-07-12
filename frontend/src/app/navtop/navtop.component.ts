@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-navtop',
@@ -6,6 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./navtop.component.css']
 })
 export class NavtopComponent implements OnInit {
+  @Output() pageChange
+  loginName = "";
+  loginPw = "";
 
   constructor() { }
   loggedIn = false;
@@ -16,6 +19,7 @@ export class NavtopComponent implements OnInit {
   onLoginClick(){
     //TODO replace with actual check
     this.loggedIn = !this.loggedIn;
+
   }
 
 }

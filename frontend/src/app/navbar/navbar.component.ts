@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
@@ -6,18 +6,31 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+  @Output() pageChange = new EventEmitter<string>();
+  pages: Array<Object> = [];
+
   constructor() { }
-  pages: Array<String> = [];
+  
+
   ngOnInit() {
 
     // test data
+    
 
-    this.pages.push('test1');
-    this.pages.push('test2');
+    this.pages.push({ name : 'Login', newPage : 'login'});
+    this.pages.push({ name : 'Profile', newPage : 'profile'});
+    this.pages.push({ name : 'TuDoos', newPage : 'todos'});
+    this.pages.push({ name : 'Groups', newPage : 'groups'});
+    this.pages.push({ name : 'Credits', newPage : 'credits'});
 
+    console.log("navbar init")
 
   }
 
+  onPageClick( newPage : string){
+    console.log("switching to " + newPage);
+    this.pageChange.emit(newPage);
+  }
 }
 
 /* subcategory
