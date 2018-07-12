@@ -34,7 +34,9 @@ public class App {
 		this.group = new GroupApp(emf);
 	}
 	
-	
+	public void close() {
+		emf.close();
+	}
 	
 	//Methods used to persist something in the DB
 	
