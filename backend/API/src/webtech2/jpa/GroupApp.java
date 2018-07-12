@@ -112,6 +112,40 @@ public class GroupApp {
     	em.close();
 	}
 	
+	public void deleteMemberFromGroup(TodooGroup group, User user) throws NoDBEntryException {
+    	EntityManager em = emf.createEntityManager();
+    	App app = new App();
+    	
+    	TodooGroup todooGroup = getGroupByName(group.getGroupName());
+    	HashSet<User> groupMembers = todooGroup.getGroupMembers();
+    	
+    	User userToRemove = app.getUserByLoginNameAndPassword(user.getLoginName(), user.getPassword());
+    	groupMembers.remove(userToRemove);
+    	
+    	for (User u : groupMembers) {
+    		System.out.println(u.getDisplayName());
+    	}
+    	
+    	//create update
+    	CriteriaBuilder cb = em.getCriteriaBuilder();
+    	CriteriaUpdate<TodooGroup> update = cb.createCriteriaUpdate(TodooGroup.class);
+    	
+    	//set the root class
+    	Root<TodooGroup> g = update.from(TodooGroup.class);
+    	
+    	//set the update and where clause
+    	update.set("groupMembers", groupMembers);
+    	Predicate sameGroupUUID = cb.equal(g.get("groupName"), "group name");
+    	update.where(sameGroupUUID);
+    	
+    	//update group members
+    	EntityTransaction tx = em.getTransaction();
+    	tx.begin();
+    	//em.createQuery(update).executeUpdate();
+    	todooGroup.setGroupMembers(groupMembers);
+    	tx.commit();
+    }
+	
 	/**
 	 * Helper function to persist an entity in the database. This method does not check for duplicates.
 	 * @param entity some entity that needs to be persisted.
