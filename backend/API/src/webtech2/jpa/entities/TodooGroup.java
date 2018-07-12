@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Group {
+public class TodooGroup {
 	
 	@Id
 	@GeneratedValue
