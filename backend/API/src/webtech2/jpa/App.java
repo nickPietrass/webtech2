@@ -27,9 +27,11 @@ import webtech2.jpa.exceptions.NoDBEntryException;
 public class App {
 	
 	private EntityManagerFactory emf;
+	private GroupApp group;
 	
 	public App() {
 		this.emf = Persistence.createEntityManagerFactory("tudoo-persistence-unit");
+		this.group = new GroupApp(emf);
 	}
 	
 	
@@ -194,29 +196,30 @@ public class App {
 		}
 	}
 	
-	/**
-	 * Returns a list of all users.
-	 * @return users all users.
-	 * @throws NoDBEntryException if there aren't any users registered.
-	 */
-	public ArrayList<User> getAllUsers() throws NoDBEntryException {
-		EntityManager em = emf.createEntityManager();
-		
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<User> cq = cb.createQuery(User.class);
-		Root<User> users = cq.from(User.class);
-		cq.select(users);
-		
-		TypedQuery<User> query = em.createQuery(cq);
-		ArrayList<User> result = new ArrayList<>(query.getResultList());
-		em.close();
-		
-		if (result.size() > 0) {
-			return result;
-		} else {
-			throw new NoDBEntryException("There aren't any users registered.");
-		}
-	}
+	//Debug
+//	/**
+//	 * Returns a list of all users.
+//	 * @return users all users.
+//	 * @throws NoDBEntryException if there aren't any users registered.
+//	 */
+//	public ArrayList<User> getAllUsers() throws NoDBEntryException {
+//		EntityManager em = emf.createEntityManager();
+//		
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		CriteriaQuery<User> cq = cb.createQuery(User.class);
+//		Root<User> users = cq.from(User.class);
+//		cq.select(users);
+//		
+//		TypedQuery<User> query = em.createQuery(cq);
+//		ArrayList<User> result = new ArrayList<>(query.getResultList());
+//		em.close();
+//		
+//		if (result.size() > 0) {
+//			return result;
+//		} else {
+//			throw new NoDBEntryException("There aren't any users registered.");
+//		}
+//	}
 	
 	/**
 	 * Returns a list of all users with the given display name.
@@ -264,11 +267,11 @@ public class App {
 		//select
 		cq.select(user).where(loginNameAndPasswordMatches);
 		TypedQuery<User> query = em.createQuery(cq);
-		User result = query.getResultList().get(0);
+		ArrayList<User> result = new ArrayList<User>(query.getResultList());
 		em.close();
 		
-		if (result != null) {
-			return result;
+		if (result.size() > 0) {
+			return result.get(0);
 		} else {
 			throw new NoDBEntryException("The user with the given loginName and password does not exist.");
 		}
