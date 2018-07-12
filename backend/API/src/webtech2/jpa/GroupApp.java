@@ -1,6 +1,7 @@
 package webtech2.jpa;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -8,6 +9,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import webtech2.jpa.entities.TodooGroup;
@@ -74,6 +77,43 @@ public class GroupApp {
     	} else {
     		throw new NoDBEntryException("Group does not exist.");
     	}
+	}
+	
+	public void addMemberToGroup(TodooGroup group, User user) throws NoDBEntryException {
+		EntityManager em = emf.createEntityManager();
+		App app = new App();
+    	
+    	TodooGroup todooGroup = getGroupByName(group.getGroupName());
+    	HashSet<User> groupMembers = todooGroup.getGroupMembers();
+    	
+    	User newMember = app.getUserByLoginNameAndPassword(user.getLoginName(), user.getPassword());
+    	groupMembers.add(newMember);
+    	
+    	for (User u : groupMembers) {
+    		System.out.println(u.getDisplayName());
+    	}
+    	
+    	//create update
+    	CriteriaBuilder cb = em.getCriteriaBuilder();
+    	CriteriaUpdate<TodooGroup> update = cb.createCriteriaUpdate(TodooGroup.class);
+    	
+    	//set the root class
+    	Root<TodooGroup> g = update.from(TodooGroup.class);
+    	
+    	//set the update and where clause
+    	update.set("groupMembers", groupMembers);
+    	Predicate sameGroupUUID = cb.equal(g.get("groupName"), "group name");
+    	update.where(sameGroupUUID);
+    	
+    	//update group members
+    	EntityTransaction tx = em.getTransaction();
+    	tx.begin();
+    	//em.createQuery(update).executeUpdate();
+    	todooGroup.setGroupMembers(groupMembers);
+    	tx.commit();
+    	
+    	app.close();
+    	em.close();
 	}
 	
 	/**
