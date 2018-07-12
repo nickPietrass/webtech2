@@ -3,6 +3,7 @@ package webtech2.jpa.entities;
 import java.util.UUID;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
@@ -10,6 +11,7 @@ import javax.persistence.OneToOne;
 public class Group {
 	
 	@Id
+	@GeneratedValue
 	private UUID groupUUID;
 	
 	private String groupName;
