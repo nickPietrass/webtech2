@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
@@ -144,6 +145,28 @@ public class GroupApp {
     	//em.createQuery(update).executeUpdate();
     	todooGroup.setGroupMembers(groupMembers);
     	tx.commit();
+    }
+	
+	private void deleteGroup(TodooGroup group) {
+    	EntityManager em = emf.createEntityManager();
+    	
+    	//create criteria delete
+    	CriteriaBuilder cb = em.getCriteriaBuilder();
+    	CriteriaDelete<TodooGroup> cd = cb.createCriteriaDelete(TodooGroup.class);
+    	Root<TodooGroup> g = cd.from(TodooGroup.class);
+    	
+    	//set predicate
+		Predicate sameGroupUUID = cb.equal(g.get("groupName"), group.getGroupName());
+		
+		//select
+		cd.where(sameGroupUUID);
+		
+		//delete
+		EntityTransaction tx = em.getTransaction();
+		tx.begin();
+		em.createQuery(cd).executeUpdate();
+		tx.commit();
+		em.close();
     }
 	
 	/**
