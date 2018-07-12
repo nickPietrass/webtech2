@@ -89,10 +89,6 @@ public class GroupApp {
     	User newMember = app.getUserByLoginNameAndPassword(user.getLoginName(), user.getPassword());
     	groupMembers.add(newMember);
     	
-    	for (User u : groupMembers) {
-    		System.out.println(u.getDisplayName());
-    	}
-    	
     	//create update
     	CriteriaBuilder cb = em.getCriteriaBuilder();
     	CriteriaUpdate<TodooGroup> update = cb.createCriteriaUpdate(TodooGroup.class);
