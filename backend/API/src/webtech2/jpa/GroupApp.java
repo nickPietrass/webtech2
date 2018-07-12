@@ -1,8 +1,14 @@
 package webtech2.jpa;
 
+import java.util.ArrayList;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import webtech2.jpa.entities.TodooGroup;
 import webtech2.jpa.entities.User;
@@ -45,6 +51,29 @@ public class GroupApp {
 
     	app.close();
     	em.close();
+	}
+	
+	public TodooGroup getGroupByName(String groupName) throws NoDBEntryException{
+		//create new EntityManager
+    	EntityManager em = emf.createEntityManager();
+    	
+    	//create criteria
+    	CriteriaBuilder cb = em.getCriteriaBuilder();
+    	CriteriaQuery<TodooGroup> q = cb.createQuery(TodooGroup.class);
+    	
+    	//set root
+    	Root<TodooGroup> g = q.from(TodooGroup.class);
+    	q.select(g).where(cb.equal(g.get("groupName"), groupName));
+    	
+    	//create query and return result group
+    	TypedQuery<TodooGroup> query = em.createQuery(q);
+    	ArrayList<TodooGroup> result = new ArrayList<TodooGroup>(query.getResultList());
+    	
+    	if (result.size() > 0) {
+    		return result.get(0);
+    	} else {
+    		throw new NoDBEntryException("Group does not exist.");
+    	}
 	}
 	
 	/**
