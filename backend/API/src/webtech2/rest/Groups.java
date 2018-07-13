@@ -3,16 +3,18 @@ package webtech2.rest;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import webtech2.rest.temporary.SerializableGroup;
+import webtech2.rest.temporary.params.GroupKick;
+import webtech2.rest.temporary.params.SerializableParam;
 
 /**
  * Created by Ilja on 26.06.2018.
@@ -24,40 +26,45 @@ public class Groups extends Application{
     @GET
     @Path("/get") //geht auch ""?
     @Produces(MediaType.APPLICATION_JSON)
-    public Object getUser(@QueryParam("id") String id){
+    public Response getUser(@HeaderParam("sessionID") String sessionID, SerializableParam groupID){ //TODO test body:"" request with String groupID instead or SerializableParam
         //Call to JPA with id.
-        return "NONE";
+        return Response.ok(new SerializableGroup()).build();
     }
     
     @POST
     @Path("/create")
-    public Response createGroup(){
-        return Response.status(401).build();
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createGroup(@HeaderParam("sessionID") String sessionID){
+    	return Response.ok(new SerializableGroup()).build();
     }
     
     @PUT
     @Path("/addUser")
-    public SerializableGroup addUserToGroup() {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addUserToGroup(@HeaderParam("sessionID") String sessionID) {
     	// jpa
-    	return new SerializableGroup();
+    	return Response.ok(new SerializableGroup()).build();
     }
     
     @DELETE
     @Path("/removeUser")
-    public SerializableGroup removeUserFromGroup() {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeUserFromGroup(@HeaderParam("sessionID") String sessionID, GroupKick kickEvent) {
     	// jpa
-    	return new SerializableGroup();
+    	return Response.ok(new SerializableGroup()).build();
     }
     
-    @PUT
-    @Path("/getUserGroups")
-    public SerializableGroup[] getUserGroups(@QueryParam("id") String loginName){
-    	return null;
+    @GET
+    @Path("/userGroups")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserGroups(@HeaderParam("sessionID") String sessionID){
+    	return Response.ok(new SerializableGroup[] {new SerializableGroup()}).build();
     }
     
     @DELETE
     @Path("/remove")
-    public Response removeUser(@QueryParam("id") String id){
-        return Response.status(401).build();
+    public Response removeUser(@HeaderParam("sessionID") String sessionID){
+    	//return Response.status(401).build();
+        return Response.ok().build();
     }
 }

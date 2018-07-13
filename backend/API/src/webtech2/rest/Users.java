@@ -1,14 +1,13 @@
 package webtech2.rest;
 
 import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -27,44 +26,48 @@ public class Users extends Application{
     @GET
     @Path("/get") //geht auch ""?
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUser(SerializableUserID idObject, @QueryParam("id") String id){
+    public Response getUser(SerializableParam userID){
         //Call to JPA with id.
     	//return Response.status(404).build();
         return Response.ok(new SerializableUser()).build();
     }
 
     @POST
-    @Path("/login")
-    public Response loginUser(SerializableUserID idObject){ //if user already logged in, give him new sessionID
-    	//return Response.ok("<sessionID>").build();
-    	return Response.status(400).build(); //falscher Username oder Passwort
+    @Path("/register")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response registerUser(SerializableUserID idObject){
+    	//return Response.status(400).build(); //Fehler.
+    	return Response.ok("myCoolSessionID").build();
     }
     
     @POST
-    @Path("/register")
-    public Response registerUser(SerializableUserID idObject){
-    	//return Response.ok("<sessionID>").build();
-        return Response.status(400).build();
+    @Path("/login")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loginUser(SerializableUserID idObject){ //TODO if user already logged in, give him new sessionID
+    	//return Response.status(400).build(); //Falscher Username oder Passwort
+    	return Response.ok("myCoolSessionID").build();
     }
-
+    
     @PUT
     @Path("/editDisplayName")
-    public Response editDisplayName(SerializableParam changeObject){
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response editDisplayName(@HeaderParam("sessionID") String sessionID, SerializableParam changeObject){
     	//return Response.ok().build(); //if it was changed
         return Response.status(400).build(); //if changeObject.sessionID bad
     }
     
     @PUT
     @Path("/editPassword")
-    public Response editPassword(SerializableParam changeObject){
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response editPassword(@HeaderParam("sessionID") String sessionID, SerializableParam changeObject){
     	//return Response.ok().build(); //if it was changed
         return Response.status(400).build(); //if changeObject.sessionID bad
     }
     
     @DELETE
     @Path("/remove")
-    @Consumes(MediaType.TEXT_PLAIN)
-    public Response removeUser(String sessionID){ //TODO test this stuff if possible, use SessionID.java if it won't work.
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeUser(@HeaderParam("sessionID") String sessionID){ //TODO test this stuff if possible, use SessionID.java if it won't work.
     	//return Response.ok().build(); //if user was removed
         return Response.status(400).build(); //if sessionID bad
     }
