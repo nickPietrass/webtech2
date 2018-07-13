@@ -28,7 +28,7 @@ public class Tudoo {
 	
 	
 	
-	public String getTodooUUID() {
+	public String getTudooUUID() {
 		return tudooUUID;
 	}
 	public String getTitle() {
@@ -37,7 +37,7 @@ public class Tudoo {
 	public String getContent() {
 		return content;
 	}
-	public User getTodooOwner() {
+	public User getTudooOwner() {
 		return tudooOwner;
 	}
 	public ArrayList<String> getVisibleBy() {
@@ -50,7 +50,7 @@ public class Tudoo {
 		return created;
 	}
 	
-	public void setTodooUUID(String todoUUID) {
+	public void setTudooUUID(String todoUUID) {
 		this.tudooUUID = todoUUID;
 	}
 	public void setTitle(String title) {
@@ -59,7 +59,7 @@ public class Tudoo {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public void setTodooOwner(User todoOwner) {
+	public void setTudooOwner(User todoOwner) {
 		this.tudooOwner = todoOwner;
 	}
 	public void setVisibleBy(ArrayList<String> visibleBy) {
