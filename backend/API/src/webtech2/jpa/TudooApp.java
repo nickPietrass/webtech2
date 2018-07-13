@@ -16,11 +16,11 @@ import webtech2.jpa.entities.TodooGroup;
 import webtech2.jpa.entities.User;
 import webtech2.jpa.exceptions.NoDBEntryException;
 
-public class TodooApp {
+public class TudooApp {
 	
 	private EntityManagerFactory emf;
 	
-	public TodooApp(EntityManagerFactory emf) {
+	public TudooApp(EntityManagerFactory emf) {
 		this.emf = emf;
 	}
 	
