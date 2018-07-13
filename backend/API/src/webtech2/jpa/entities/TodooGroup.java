@@ -13,7 +13,7 @@ import javax.persistence.OneToOne;
 public class TodooGroup {
 	
 	@Id
-	private UUID groupUUID;
+	private String groupUUID;
 	
 	private String groupName;
 	@OneToOne
@@ -21,7 +21,7 @@ public class TodooGroup {
 	private ArrayList<User> groupMembers;
 	
 	
-	public UUID getGroupUUID() {
+	public String getGroupUUID() {
 		return groupUUID;
 	}
 	public String getGroupName() {
@@ -34,7 +34,7 @@ public class TodooGroup {
 		return groupMembers;
 	}
 	
-	public void setGroupUUID(UUID groupUUID) {
+	public void setGroupUUID(String groupUUID) {
 		this.groupUUID = groupUUID;
 	}
 	public void setGroupName(String groupName) {
