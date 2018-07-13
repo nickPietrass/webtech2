@@ -10,7 +10,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Todoo {
+public class Tudoo {
 	
 	@Id
 	@GeneratedValue

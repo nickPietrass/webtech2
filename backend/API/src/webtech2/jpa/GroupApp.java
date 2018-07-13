@@ -1,6 +1,7 @@
 package webtech2.jpa;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 import javax.persistence.EntityManager;
@@ -143,49 +144,30 @@ public class GroupApp {
 	}
 	
 	/**
-	 * Get all groups, where the user is owner or member of the groups.
-	 * @param user user
-	 * @return ArrayList<TodooGroup> groups
-	 * @throws NoDBEntryException if the given user does note exist.
-	 */
-	public ArrayList<TodooGroup> getGroupsOfUser(User user) throws NoDBEntryException {
-		//create EntityManager and App
-		EntityManager em = emf.createEntityManager();
-		App app = new App();
-		
-		User managedUser = app.getUserByLoginName(user.getLoginName());
-		
-		//create criteria
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
-		
-		//set root and select
-		Root<TodooGroup> g = cq.from(TodooGroup.class);
-		Predicate userIsGroupOwner = cb.equal(g.get("groupOwner"), managedUser);
-		Predicate userIsGroupMember = cb.isMember(managedUser, g.get("groupMembers"));
-		Predicate userIsGroupOwnerOrGroupMember = cb.and(userIsGroupOwner, userIsGroupMember);
-		cq.select(g).where(userIsGroupOwnerOrGroupMember);
-		
-		//return results as ArrayList
-		TypedQuery<TodooGroup> query = em.createQuery(cq);
-		return new ArrayList<TodooGroup>(query.getResultList());
-	}
-	
-	/**
 	 * Adds a User to the group.
 	 * @param group group
 	 * @param user user to be added to the group
 	 * @throws NoDBEntryException if the group or user does not exist.
 	 */
-	public void addMemberToGroup(String groupID, User user) throws NoDBEntryException {
+	public void addMemberToGroup(String groupID, String loginName) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
 		App app = new App();
     	
     	TodooGroup todooGroup = getGroupByID(groupID);
     	ArrayList<User> groupMembers = todooGroup.getGroupMembers();
+    	boolean containsUser = false;
     	
-    	User newMember = app.getUserByLoginName(user.getLoginName());
-    	groupMembers.add(newMember);
+    	for (int i = 0; i < groupMembers.size(); i++) {
+    		if (groupMembers.get(i).getLoginName() == loginName) {
+    			containsUser = true;
+    		}
+    	}
+    	
+    	if (containsUser) {
+    		app.close();
+    		em.close();
+    		return;
+    	}
     	
     	//create update
     	CriteriaBuilder cb = em.getCriteriaBuilder();

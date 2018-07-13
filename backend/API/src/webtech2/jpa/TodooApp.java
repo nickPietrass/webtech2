@@ -11,7 +11,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import webtech2.jpa.entities.Todoo;
+import webtech2.jpa.entities.Tudoo;
 import webtech2.jpa.entities.TodooGroup;
 import webtech2.jpa.entities.User;
 import webtech2.jpa.exceptions.NoDBEntryException;
@@ -35,20 +35,20 @@ public class TodooApp {
 		User managedUser = app.getUserByLoginName(owner.getLoginName());
 		
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Todoo> cq = cb.createQuery(Todoo.class);
-		Root<Todoo> t = cq.from(Todoo.class);
+		CriteriaQuery<Tudoo> cq = cb.createQuery(Tudoo.class);
+		Root<Tudoo> t = cq.from(Tudoo.class);
 		
 		cq.select(t).where(cb.equal(t.get("todooOwner"), managedUser));
-		TypedQuery<Todoo> query = em.createQuery(cq);
+		TypedQuery<Tudoo> query = em.createQuery(cq);
 		
 		//TODO
 		return new TodooGroup();
 	}
 	
-	public ArrayList<Todoo> getAllVisibleTodoosOfUser(String loginName) {
+	public ArrayList<Tudoo> getAllVisibleTodoosOfUser(String loginName) {
 		//TODO
 		
-		return new ArrayList<Todoo>();
+		return new ArrayList<Tudoo>();
 	}
 	
 	public void changeTodooContent(UUID todooID, String title, String content) {
