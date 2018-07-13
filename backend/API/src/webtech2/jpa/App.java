@@ -27,7 +27,7 @@ import webtech2.jpa.exceptions.NoDBEntryException;
 public class App {
 	
 	private EntityManagerFactory emf;
-	private GroupApp group;
+	private GroupApp groupApp;
 	
 	public static App instance;
 	
@@ -36,7 +36,7 @@ public class App {
 	 */
 	public App() {
 		this.emf = Persistence.createEntityManagerFactory("tudoo-persistence-unit");
-		this.group = new GroupApp(emf);
+		this.groupApp = new GroupApp(emf);
 		instance = this;
 	}
 	
@@ -45,7 +45,7 @@ public class App {
 	 */
 	public void close() {
 		emf.close();
-		group.close();
+		groupApp.close();
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class App {
 	 * @return groupApp
 	 */
 	public GroupApp getGroup() {
-		return group;
+		return groupApp;
 	}
 	
 	//Methods used to persist something in the DB
