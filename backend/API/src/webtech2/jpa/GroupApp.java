@@ -82,33 +82,20 @@ public class GroupApp {
     	}
 	}
 	
-	/**
-	 * Searches for a specific group by its name.
-	 * @param groupName group name to search for.
-	 * @return TodooGroup a group with the given name.
-	 * @throws NoDBEntryException if the group with the given name does not exist.
-	 */
-	public TodooGroup getGroupByName(String groupName) throws NoDBEntryException{
-		//create new EntityManager
-    	EntityManager em = emf.createEntityManager();
-    	
-    	//create criteria
-    	CriteriaBuilder cb = em.getCriteriaBuilder();
-    	CriteriaQuery<TodooGroup> q = cb.createQuery(TodooGroup.class);
-    	
-    	//set root
-    	Root<TodooGroup> g = q.from(TodooGroup.class);
-    	q.select(g).where(cb.equal(g.get("groupName"), groupName));
-    	
-    	//create query and return result group
-    	TypedQuery<TodooGroup> query = em.createQuery(q);
-    	ArrayList<TodooGroup> result = new ArrayList<TodooGroup>(query.getResultList());
-    	
-    	if (result.size() > 0) {
-    		return result.get(0);
-    	} else {
-    		throw new NoDBEntryException("Group does not exist.");
-    	}
+	public TodooGroup getGroupByID(UUID groupUUID) {
+		//TODO 
+		
+		TodooGroup group = new TodooGroup();
+		group.setGroupUUID(groupUUID);
+		group.setGroupOwner(new User());
+		group.setGroupMembers(new ArrayList<User>());
+		group.setGroupName("group name");
+		
+		return group;
+	}
+	
+	public ArrayList<TodooGroup> getGroupWhereOwnerIs(String loginName) {
+		return new ArrayList<TodooGroup>();
 	}
 	
 	/**
@@ -146,11 +133,11 @@ public class GroupApp {
 	 * @param user user to be added to the group
 	 * @throws NoDBEntryException if the group or user does not exist.
 	 */
-	public void addMemberToGroup(TodooGroup group, User user) throws NoDBEntryException {
+	public void addMemberToGroup(UUID groupID, User user) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
 		App app = new App();
     	
-    	TodooGroup todooGroup = getGroupByName(group.getGroupName());
+    	TodooGroup todooGroup = getGroupByID(groupID);
     	ArrayList<User> groupMembers = todooGroup.getGroupMembers();
     	
     	User newMember = app.getUserByLoginName(user.getLoginName());
@@ -185,11 +172,11 @@ public class GroupApp {
 	 * @param user user to delete.
 	 * @throws NoDBEntryException if the group or user does not exist.
 	 */
-	public void deleteMemberFromGroup(TodooGroup group, User user) throws NoDBEntryException {
+	public void deleteUserFromGroup(UUID groupID, User user) throws NoDBEntryException {
     	EntityManager em = emf.createEntityManager();
     	App app = new App();
     	
-    	TodooGroup todooGroup = getGroupByName(group.getGroupName());
+    	TodooGroup todooGroup = getGroupByID(groupID);
     	ArrayList<User> groupMembers = todooGroup.getGroupMembers();
     	
     	User userToRemove = app.getUserByLoginName(user.getLoginName());
@@ -219,7 +206,7 @@ public class GroupApp {
 	 * Deletes the whole group.
 	 * @param group group to be deleted.
 	 */
-	public void deleteGroup(TodooGroup group) {
+	public void deleteGroup(UUID groupID) {
     	EntityManager em = emf.createEntityManager();
     	
     	//create criteria delete
@@ -228,7 +215,7 @@ public class GroupApp {
     	Root<TodooGroup> g = cd.from(TodooGroup.class);
     	
     	//set predicate
-		Predicate sameGroupUUID = cb.equal(g.get("groupName"), group.getGroupName());
+		Predicate sameGroupUUID = cb.equal(g.get("groupUUID"), groupID);
 		
 		//select
 		cd.where(sameGroupUUID);
