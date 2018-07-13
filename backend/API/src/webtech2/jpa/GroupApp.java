@@ -42,7 +42,7 @@ public class GroupApp {
     	App app = new App();
 		
     	try {
-    		User managedOwner = app.getUserByLoginNameAndPassword(owner.getLoginName(), owner.getPassword());
+    		User managedOwner = app.getUserByLoginName(owner.getLoginName());
     		
     		TodooGroup group = new TodooGroup();
         	group.setGroupName("group name");
@@ -117,7 +117,7 @@ public class GroupApp {
 		EntityManager em = emf.createEntityManager();
 		App app = new App();
 		
-		User managedUser = app.getUserByLoginNameAndPassword(user.getLoginName(), user.getPassword());
+		User managedUser = app.getUserByLoginName(user.getLoginName());
 		
 		//create criteria
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -148,7 +148,7 @@ public class GroupApp {
     	TodooGroup todooGroup = getGroupByName(group.getGroupName());
     	HashSet<User> groupMembers = todooGroup.getGroupMembers();
     	
-    	User newMember = app.getUserByLoginNameAndPassword(user.getLoginName(), user.getPassword());
+    	User newMember = app.getUserByLoginName(user.getLoginName());
     	groupMembers.add(newMember);
     	
     	//create update
@@ -187,7 +187,7 @@ public class GroupApp {
     	TodooGroup todooGroup = getGroupByName(group.getGroupName());
     	HashSet<User> groupMembers = todooGroup.getGroupMembers();
     	
-    	User userToRemove = app.getUserByLoginNameAndPassword(user.getLoginName(), user.getPassword());
+    	User userToRemove = app.getUserByLoginName(user.getLoginName());
     	groupMembers.remove(userToRemove);
     	
     	//create update

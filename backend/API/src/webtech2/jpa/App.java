@@ -79,9 +79,11 @@ public class App {
 	 * @param password password of the user.
 	 * @param newDisplayName new display name for the user.
 	 */
-	public void changeUserDisplayName(String loginName, String password, String newDisplayName) {
-		//create update
+	public void changeUserDisplayName(String loginName, String newDisplayName) throws NoDBEntryException {
+		//create EntityManager
 		EntityManager em = emf.createEntityManager();
+		
+		//create update
     	CriteriaBuilder cb = em.getCriteriaBuilder();
     	CriteriaUpdate<User> update = cb.createCriteriaUpdate(User.class);
     	
@@ -90,8 +92,9 @@ public class App {
     	
     	//set the update and where clause
     	update.set("displayName", newDisplayName);
-    	Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
-    	update.where(loginNameAndPasswordMatches);
+    	Predicate loginNameMatches = cb.equal(user.get("loginName"), loginName);
+    	update.where(loginNameMatches);
+    	//TODO check whether something is found with given loginName. If not, throw (up)
     	
     	//change displayName
     	EntityTransaction tx = em.getTransaction();
@@ -101,38 +104,38 @@ public class App {
     	em.close();
 	}
 	
-	/**
-	 * Changes the user login name. This method will check if the new login name is already taken.
-	 * @param loginName old login name.
-	 * @param password password of the user.
-	 * @param newLoginName new login name.
-	 * @throws DuplicateDBEntryException if the new login name already exists.
-	 */
-	public void changeUserLoginName(String loginName, String password, String newLoginName) throws DuplicateDBEntryException {
-		if (loginNameIsAlreadyTaken(newLoginName)) {
-			throw new DuplicateDBEntryException("Error setting new login name");
-		}
-		
-		//create update
-		EntityManager em = emf.createEntityManager();
-    	CriteriaBuilder cb = em.getCriteriaBuilder();
-    	CriteriaUpdate<User> update = cb.createCriteriaUpdate(User.class);
-    	
-    	//set the root class
-    	Root<User> user = update.from(User.class);
-    	
-    	//set the update and where clause
-    	update.set("displayName", newLoginName);
-    	Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
-    	update.where(loginNameAndPasswordMatches);
-    	
-    	//change displayName
-    	EntityTransaction tx = em.getTransaction();
-    	tx.begin();
-    	em.createQuery(update).executeUpdate();
-    	tx.commit();
-    	em.close();
-	}
+//	/**
+//	 * Changes the user login name. This method will check if the new login name is already taken.
+//	 * @param loginName old login name.
+//	 * @param password password of the user.
+//	 * @param newLoginName new login name.
+//	 * @throws DuplicateDBEntryException if the new login name already exists.
+//	 */
+//	public void changeUserLoginName(String loginName, String password, String newLoginName) throws DuplicateDBEntryException {
+//		if (loginNameIsAlreadyTaken(newLoginName)) {
+//			throw new DuplicateDBEntryException("Error setting new login name");
+//		}
+//		
+//		//create update
+//		EntityManager em = emf.createEntityManager();
+//    	CriteriaBuilder cb = em.getCriteriaBuilder();
+//    	CriteriaUpdate<User> update = cb.createCriteriaUpdate(User.class);
+//    	
+//    	//set the root class
+//    	Root<User> user = update.from(User.class);
+//    	
+//    	//set the update and where clause
+//    	update.set("displayName", newLoginName);
+//    	Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
+//    	update.where(loginNameAndPasswordMatches);
+//    	
+//    	//change displayName
+//    	EntityTransaction tx = em.getTransaction();
+//    	tx.begin();
+//    	em.createQuery(update).executeUpdate();
+//    	tx.commit();
+//    	em.close();
+//	}
 	
 	/**
 	 * Changes the user password.
@@ -140,7 +143,7 @@ public class App {
 	 * @param password old password of the user.
 	 * @param newPassword new password of the user.
 	 */
-	public void changeUserPassword(String loginName, String password, String newPassword) {
+	public void changeUserPassword(String loginName, String newPassword) throws NoDBEntryException {
 		//create update
 		EntityManager em = emf.createEntityManager();
     	CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -151,8 +154,9 @@ public class App {
     	
     	//set the update and where clause
     	update.set("password", newPassword);
-    	Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
-    	update.where(loginNameAndPasswordMatches);
+    	Predicate loginNameMatches = cb.equal(user.get("loginName"), loginName);
+    	update.where(loginNameMatches);
+    	//TODO siehe oben
     	
     	//change displayName
     	EntityTransaction tx = em.getTransaction();
@@ -165,25 +169,6 @@ public class App {
 	
 	
 	//Methods used to get something from the DB
-	
-	/**
-	 * Returns a user by his userUUID.
-	 * @param userUUID userUUID.
-	 * @return user if the user with the userUUID is in the database.
-	 * @throws NoDBEntryException if the given userUUID and its user does not exists.
-	 */
-	public User getUserById(UUID userUUID) throws NoDBEntryException {
-		EntityManager em = emf.createEntityManager();
-		
-		User user = em.find(User.class, userUUID);
-		em.close();
-		
-		if (user == null) {
-			throw new NoDBEntryException("There exists no user with the given UUID: " + userUUID);
-		} else {
-			return user;
-		}
-	}
 	
 	//Debug
 //	/**
@@ -210,39 +195,38 @@ public class App {
 //		}
 //	}
 	
-	/**
-	 * Returns a list of all users with the given display name.
-	 * @param displayName display name to search for.
-	 * @return users with the given display name.
-	 * @throws NoDBEntryException if there aren't any users with the given display name.
-	 */
-	public ArrayList<User> getUsersByDisplayName(String displayName) throws NoDBEntryException{
-		EntityManager em = emf.createEntityManager();
-		
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<User> cq = cb.createQuery(User.class);
-		Root<User> users = cq.from(User.class);
-		cq.select(users).where(cb.equal(users.get("displayName"), displayName));
-		
-		TypedQuery<User> query = em.createQuery(cq);
-		ArrayList<User> result = new ArrayList<>(query.getResultList());
-		em.close();
-		
-		if (result.size() > 0) {
-			return result;
-		} else {
-			throw new NoDBEntryException("The user(s) with the given display name: " + displayName + " do(es) not exist.");
-		}
-	}
+//	/**
+//	 * Returns a list of all users with the given display name.
+//	 * @param displayName display name to search for.
+//	 * @return users with the given display name.
+//	 * @throws NoDBEntryException if there aren't any users with the given display name.
+//	 */
+//	public ArrayList<User> getUsersByDisplayName(String displayName) throws NoDBEntryException{
+//		EntityManager em = emf.createEntityManager();
+//		
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		CriteriaQuery<User> cq = cb.createQuery(User.class);
+//		Root<User> users = cq.from(User.class);
+//		cq.select(users).where(cb.equal(users.get("displayName"), displayName));
+//		
+//		TypedQuery<User> query = em.createQuery(cq);
+//		ArrayList<User> result = new ArrayList<>(query.getResultList());
+//		em.close();
+//		
+//		if (result.size() > 0) {
+//			return result;
+//		} else {
+//			throw new NoDBEntryException("The user(s) with the given display name: " + displayName + " do(es) not exist.");
+//		}
+//	}
 	
 	/**
-	 * Returns a User with the given loginName and password.
+	 * Returns a User with the given loginName.
 	 * @param loginName loginName of the user.
-	 * @param password password of the user.
 	 * @return result a user if it exists.
-	 * @throws NoDBEntryException if the user with the given loginName and password does not exist.
+	 * @throws NoDBEntryException if the user with the given loginName does not exist.
 	 */
-	public User getUserByLoginNameAndPassword(String loginName, String password) throws NoDBEntryException {
+	public User getUserByLoginName(String loginName) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
 		
 		//create criteria
@@ -251,10 +235,10 @@ public class App {
 		Root<User> user = cq.from(User.class);
 		
 		//set the predicate
-		Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
+		Predicate loginNameMatches = cb.equal(user.get("loginName"), loginName);
 		
 		//select
-		cq.select(user).where(loginNameAndPasswordMatches);
+		cq.select(user).where(loginNameMatches);
 		TypedQuery<User> query = em.createQuery(cq);
 		ArrayList<User> result = new ArrayList<User>(query.getResultList());
 		em.close();
@@ -262,7 +246,7 @@ public class App {
 		if (result.size() > 0) {
 			return result.get(0);
 		} else {
-			throw new NoDBEntryException("The user with the given loginName and password does not exist.");
+			throw new NoDBEntryException("The user with the given loginName does not exist.");
 		}
 	}
 	
@@ -275,19 +259,21 @@ public class App {
 	 * @param loginName the users loginName.
 	 * @param password the users password.
 	 */
-	public void deleteUser(String loginName, String password) {
+	public void deleteUser(String loginName) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
-    	
+
+		//TODO throw
+		
     	//create criteria delete
     	CriteriaBuilder cb = em.getCriteriaBuilder();
     	CriteriaDelete<User> cd = cb.createCriteriaDelete(User.class);
     	Root<User> user = cd.from(User.class);
     	
     	//set predicate
-		Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
+		Predicate loginNameMatches = cb.equal(user.get("loginName"), loginName);
 		
 		//select
-		cd.where(loginNameAndPasswordMatches);
+		cd.where(loginNameMatches);
 		
 		//delete
 		EntityTransaction tx = em.getTransaction();
@@ -314,7 +300,7 @@ public class App {
 		cq.select(users).where(cb.equal(users.get("loginName"), loginName));
 		
 		TypedQuery<User> query = em.createQuery(cq);
-		ArrayList<User> result = new ArrayList<>(query.getResultList());
+		ArrayList<User> result = new ArrayList<User>(query.getResultList());
 		em.close();
 		
 		return result.size() > 0;

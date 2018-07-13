@@ -44,10 +44,10 @@ public class Todoo {
 	public User getTodooOwner() {
 		return todooOwner;
 	}
-	public ArrayList<User> getVisibleBy() {
+	public ArrayList<String> getVisibleBy() {
 		return visibleBy;
 	}
-	public ArrayList<User> editableBy() {
+	public ArrayList<String> editableBy() {
 		return editableBy;
 	}
 	public String getCreationDate() {
@@ -66,10 +66,10 @@ public class Todoo {
 	public void setTodooOwner(User todoOwner) {
 		this.todooOwner = todoOwner;
 	}
-	public void setVisibleBy(ArrayList<User> visibleBy) {
+	public void setVisibleBy(ArrayList<String> visibleBy) {
 		this.visibleBy = visibleBy;
 	}
-	public void setEditableBy(ArrayList<User> editableBy) {
+	public void setEditableBy(ArrayList<String> editableBy) {
 		this.editableBy = editableBy;
 	}
 	public void setCreationDate(String created) {
