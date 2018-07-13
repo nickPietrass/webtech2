@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import webtech2.rest.temporary.SerializableUser;
 import webtech2.rest.temporary.SerializableUserID;
+import webtech2.rest.temporary.params.NewUser;
 
 /**
  * Created by Ilja on 26.06.2018.
@@ -35,7 +36,7 @@ public class Users extends Application{
     @POST
     @Path("/register")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerUser(SerializableUserID idObject){
+    public Response registerUser(NewUser idObject){
     	//return Response.status(400).build(); //Fehler.
     	return Response.ok("myCoolSessionID").build();
     }

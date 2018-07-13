@@ -1,29 +1,31 @@
 package webtech2.rest.temporary;
 
 /**
- * Temporary storage for HTTP body data of a login/register request.
+ * Temporary storage for HTTP body data of a login request.
  * @author Ilja
  */
 public class SerializableUserID {
-	private String username, password;
+	private String loginName, password;
 	
 	/**
 	 * Empty constructor for Jax-RS.
 	 */
 	public SerializableUserID() {}
-
-	public SerializableUserID(String username, String password) {
-		this.username = username;
+	
+	public SerializableUserID(String loginName, String password) {
+		this.loginName = loginName;
 		this.password = password;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getLoginName() {
+		return loginName;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
 	}
+
+
 
 	public String getPassword() {
 		return password;
