@@ -219,7 +219,7 @@ public class App {
 		cq.select(user).where(cb.equal(user.get("loginName"), loginName));
 		
 		TypedQuery<User> query = em.createQuery(cq);
-		return query.getResultList().size() > 0;
+		return query.getResultList().size() == 0;
 	}
 	
 	/**
