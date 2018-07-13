@@ -39,11 +39,11 @@ public class App {
 		group.close();
 	}
 	
-	//Methods used to persist something in the DB
-	
 	public GroupApp getGroup() {
 		return group;
 	}
+	
+	//Methods used to persist something in the DB
 	
 	/**
 	 * Persists a new user in the database and gives it a new UUID.
@@ -74,12 +74,16 @@ public class App {
 	//Methods used to update an entry in the DB
 	
 	/**
-	 * Changes the user display name.
-	 * @param loginName login of the user.
-	 * @param password password of the user.
-	 * @param newDisplayName new display name for the user.
+	 * Changes the user's display name.
+	 * @param loginName login name of the user.
+	 * @param newDisplayName new display name of the user.
+	 * @throws NoDBEntryException if the user does not exist.
 	 */
 	public void changeUserDisplayName(String loginName, String newDisplayName) throws NoDBEntryException {
+		if (userIsNotInDB(loginName)) {
+			throw new NoDBEntryException("Error changing display name. The user does not exist.");
+		}
+		
 		//create EntityManager
 		EntityManager em = emf.createEntityManager();
 		
@@ -94,7 +98,6 @@ public class App {
     	update.set("displayName", newDisplayName);
     	Predicate loginNameMatches = cb.equal(user.get("loginName"), loginName);
     	update.where(loginNameMatches);
-    	//TODO check whether something is found with given loginName. If not, throw (up)
     	
     	//change displayName
     	EntityTransaction tx = em.getTransaction();
@@ -104,46 +107,16 @@ public class App {
     	em.close();
 	}
 	
-//	/**
-//	 * Changes the user login name. This method will check if the new login name is already taken.
-//	 * @param loginName old login name.
-//	 * @param password password of the user.
-//	 * @param newLoginName new login name.
-//	 * @throws DuplicateDBEntryException if the new login name already exists.
-//	 */
-//	public void changeUserLoginName(String loginName, String password, String newLoginName) throws DuplicateDBEntryException {
-//		if (loginNameIsAlreadyTaken(newLoginName)) {
-//			throw new DuplicateDBEntryException("Error setting new login name");
-//		}
-//		
-//		//create update
-//		EntityManager em = emf.createEntityManager();
-//    	CriteriaBuilder cb = em.getCriteriaBuilder();
-//    	CriteriaUpdate<User> update = cb.createCriteriaUpdate(User.class);
-//    	
-//    	//set the root class
-//    	Root<User> user = update.from(User.class);
-//    	
-//    	//set the update and where clause
-//    	update.set("displayName", newLoginName);
-//    	Predicate loginNameAndPasswordMatches = cb.and(cb.equal(user.get("loginName"), loginName), cb.equal(user.get("password"), password));
-//    	update.where(loginNameAndPasswordMatches);
-//    	
-//    	//change displayName
-//    	EntityTransaction tx = em.getTransaction();
-//    	tx.begin();
-//    	em.createQuery(update).executeUpdate();
-//    	tx.commit();
-//    	em.close();
-//	}
-	
 	/**
 	 * Changes the user password.
 	 * @param loginName login name of the user.
-	 * @param password old password of the user.
 	 * @param newPassword new password of the user.
 	 */
 	public void changeUserPassword(String loginName, String newPassword) throws NoDBEntryException {
+		if (userIsNotInDB(loginName)) {
+			throw new NoDBEntryException("Error changing password. The given user does not exist.");
+		}
+		
 		//create update
 		EntityManager em = emf.createEntityManager();
     	CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -156,7 +129,6 @@ public class App {
     	update.set("password", newPassword);
     	Predicate loginNameMatches = cb.equal(user.get("loginName"), loginName);
     	update.where(loginNameMatches);
-    	//TODO siehe oben
     	
     	//change displayName
     	EntityTransaction tx = em.getTransaction();
@@ -169,56 +141,6 @@ public class App {
 	
 	
 	//Methods used to get something from the DB
-	
-	//Debug
-//	/**
-//	 * Returns a list of all users.
-//	 * @return users all users.
-//	 * @throws NoDBEntryException if there aren't any users registered.
-//	 */
-//	public ArrayList<User> getAllUsers() throws NoDBEntryException {
-//		EntityManager em = emf.createEntityManager();
-//		
-//		CriteriaBuilder cb = em.getCriteriaBuilder();
-//		CriteriaQuery<User> cq = cb.createQuery(User.class);
-//		Root<User> users = cq.from(User.class);
-//		cq.select(users);
-//		
-//		TypedQuery<User> query = em.createQuery(cq);
-//		ArrayList<User> result = new ArrayList<>(query.getResultList());
-//		em.close();
-//		
-//		if (result.size() > 0) {
-//			return result;
-//		} else {
-//			throw new NoDBEntryException("There aren't any users registered.");
-//		}
-//	}
-	
-//	/**
-//	 * Returns a list of all users with the given display name.
-//	 * @param displayName display name to search for.
-//	 * @return users with the given display name.
-//	 * @throws NoDBEntryException if there aren't any users with the given display name.
-//	 */
-//	public ArrayList<User> getUsersByDisplayName(String displayName) throws NoDBEntryException{
-//		EntityManager em = emf.createEntityManager();
-//		
-//		CriteriaBuilder cb = em.getCriteriaBuilder();
-//		CriteriaQuery<User> cq = cb.createQuery(User.class);
-//		Root<User> users = cq.from(User.class);
-//		cq.select(users).where(cb.equal(users.get("displayName"), displayName));
-//		
-//		TypedQuery<User> query = em.createQuery(cq);
-//		ArrayList<User> result = new ArrayList<>(query.getResultList());
-//		em.close();
-//		
-//		if (result.size() > 0) {
-//			return result;
-//		} else {
-//			throw new NoDBEntryException("The user(s) with the given display name: " + displayName + " do(es) not exist.");
-//		}
-//	}
 	
 	/**
 	 * Returns a User with the given loginName.
@@ -260,9 +182,11 @@ public class App {
 	 * @param password the users password.
 	 */
 	public void deleteUser(String loginName) throws NoDBEntryException {
+		if (userIsNotInDB(loginName)) {
+			throw new NoDBEntryException("Error deleting user. User does not exist.");
+		}
+		
 		EntityManager em = emf.createEntityManager();
-
-		//TODO throw
 		
     	//create criteria delete
     	CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -286,6 +210,18 @@ public class App {
 	
 	//Helper methods
 	
+	public boolean userIsNotInDB(String loginName) {
+		//create EntityManager and criteria
+		EntityManager em = emf.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> user = cq.from(User.class);
+		cq.select(user).where(cb.equal(user.get("loginName"), loginName));
+		
+		TypedQuery<User> query = em.createQuery(cq);
+		return query.getResultList().size() > 0;
+	}
+	
 	/**
 	 * Checks if the login name is already taken.
 	 * @param loginName search for that login name.
@@ -303,7 +239,7 @@ public class App {
 		ArrayList<User> result = new ArrayList<User>(query.getResultList());
 		em.close();
 		
-		return result.size() > 0;
+		return result.size() == 0;
 	}
 	
 	/**
