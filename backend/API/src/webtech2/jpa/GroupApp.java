@@ -1,7 +1,7 @@
 package webtech2.jpa;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -33,48 +33,53 @@ public class GroupApp {
 		emf.close();
 	}
 	
+	
+	
+	//Methods used to create a group
+	
 	/**
-	 * Create and persist a new group into the DB. Persists the owner first, if not already in the DB.
-	 * @param owner owner of the group
+	 * Create a new group and persists it in the DB.
+	 * @param groupName group name of the new group.
+	 * @param loginName owner of the new group.
+	 * @return TodooGroup the newly created group.
+	 * @throws NoDBEntryException if the user does not exist or, for some reason, the persisted group can not be found.
 	 */
-	public void registerNewGroup(User owner) {
+	public TodooGroup registerNewTodooGroup(String groupName, String loginName) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
     	App app = new App();
+    	
+    	//get user from the DB
+    	User user = app.getUserByLoginName(loginName);
 		
-    	try {
-    		User managedOwner = app.getUserByLoginName(owner.getLoginName());
-    		
-    		TodooGroup group = new TodooGroup();
-        	group.setGroupName("group name");
-        	group.setGroupOwner(managedOwner);
-        	
-        	persist(group);
-    	} catch (NoDBEntryException e) {
-    		em.getTransaction().begin();
-    		em.merge(owner);
-    		em.flush();
-    		em.getTransaction().commit();
-    		
-    		User managedOwner = em.find(User.class, owner.getLoginName());
-    		
-    		CriteriaBuilder cb = em.getCriteriaBuilder();
-    		CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
-    		Root<TodooGroup> g = cq.from(TodooGroup.class);
-    		
-    		cq.select(g).where(cb.equal(g.get("groupOwner"), managedOwner));
-    		TypedQuery<TodooGroup> query = em.createQuery(cq);
-    		
-    		int groupNumber = query.getResultList().size() + 1;
-    		
-    		TodooGroup group = new TodooGroup();
-        	group.setGroupName(managedOwner.getDisplayName() + "'s group " + groupNumber);
-        	group.setGroupOwner(managedOwner);
-        	
-        	persist(group);
-    	}
-
-    	app.close();
+    	//create new group
+    	TodooGroup group = new TodooGroup();
+    	UUID groupUUID = UUID.randomUUID();
+    	group.setGroupUUID(groupUUID);
+    	group.setGroupOwner(user);
+    	group.setGroupName(groupName);
+    	group.setGroupMembers(new ArrayList<User>());
+    	
+    	//persist new group
+    	persist(group);
+    	
+    	//get the new group from the DB
+    	CriteriaBuilder cb = em.getCriteriaBuilder();
+    	CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
+    	Root<TodooGroup> g = cq.from(TodooGroup.class);
+    	
+    	Predicate groupUUIDMatches = cb.equal(g.get("groupUUID"), groupUUID);
+    	cq.select(g).where(groupUUIDMatches);
+    	
+    	//return result
+    	TypedQuery<TodooGroup> query = em.createQuery(cq);
+    	ArrayList<TodooGroup> result = new ArrayList<TodooGroup>(query.getResultList());
     	em.close();
+    	
+    	if (result.size() > 0) {
+    		return result.get(0);
+    	} else {
+    		throw new NoDBEntryException("Error finding the group after creating. Group does not exist.");
+    	}
 	}
 	
 	/**
@@ -146,7 +151,7 @@ public class GroupApp {
 		App app = new App();
     	
     	TodooGroup todooGroup = getGroupByName(group.getGroupName());
-    	HashSet<User> groupMembers = todooGroup.getGroupMembers();
+    	ArrayList<User> groupMembers = todooGroup.getGroupMembers();
     	
     	User newMember = app.getUserByLoginName(user.getLoginName());
     	groupMembers.add(newMember);
@@ -185,7 +190,7 @@ public class GroupApp {
     	App app = new App();
     	
     	TodooGroup todooGroup = getGroupByName(group.getGroupName());
-    	HashSet<User> groupMembers = todooGroup.getGroupMembers();
+    	ArrayList<User> groupMembers = todooGroup.getGroupMembers();
     	
     	User userToRemove = app.getUserByLoginName(user.getLoginName());
     	groupMembers.remove(userToRemove);
