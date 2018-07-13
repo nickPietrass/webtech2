@@ -34,14 +34,14 @@ public class Groups extends Application{
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createGroup(@HeaderParam("sessionID") String sessionID){
+    public Response createGroup(@HeaderParam("sessionID") String sessionID, String groupName){
     	return Response.ok(new SerializableGroup()).build();
     }
     
     @PUT
     @Path("/addUser")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addUserToGroup(@HeaderParam("sessionID") String sessionID) {
+    public Response addUserToGroup(@HeaderParam("sessionID") String sessionID, String loginName) {
     	// jpa
     	return Response.ok(new SerializableGroup()).build();
     }
@@ -63,7 +63,7 @@ public class Groups extends Application{
     
     @DELETE
     @Path("/remove")
-    public Response removeUser(@HeaderParam("sessionID") String sessionID){
+    public Response removeUser(@HeaderParam("sessionID") String sessionID, String groupID){
     	//return Response.status(401).build();
         return Response.ok().build();
     }
