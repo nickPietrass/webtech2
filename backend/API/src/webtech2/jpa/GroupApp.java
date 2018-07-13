@@ -113,8 +113,33 @@ public class GroupApp {
 		}
 	}
 	
-	public ArrayList<TodooGroup> getGroupWhereOwnerIs(String loginName) {
-		return new ArrayList<TodooGroup>();
+	/**
+	 * Get all groups where the give user is owner of.
+	 * @param loginName user
+	 * @return ArrayList<TodooGroup> groups with the given user as the owner.
+	 * @throws NoDBEntryException if the user does not exist.
+	 */
+	public ArrayList<TodooGroup> getGroupsWhereOwnerIs(String loginName) throws NoDBEntryException {
+    	EntityManager em = emf.createEntityManager();
+    	App app = new App();
+    	
+    	User managedUser = app.getUserByLoginName(loginName);
+
+		//create criteria
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
+		Root<TodooGroup> user = cq.from(TodooGroup.class);
+		
+		//set the predicate
+		Predicate groupUUIDMatches = cb.equal(user.get("groupOwner"), managedUser);
+		
+		//select
+		cq.select(user).where(groupUUIDMatches);
+		TypedQuery<TodooGroup> query = em.createQuery(cq);
+		ArrayList<TodooGroup> result = new ArrayList<TodooGroup>(query.getResultList());
+		em.close();
+		
+		return result;
 	}
 	
 	/**
