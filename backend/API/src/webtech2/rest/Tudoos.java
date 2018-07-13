@@ -13,7 +13,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import webtech2.rest.temporary.SerializableTudoo;
-import webtech2.rest.temporary.params.SerializableParam;
 import webtech2.rest.temporary.params.TudooPermissionChange;
 
 /**
@@ -23,7 +22,7 @@ import webtech2.rest.temporary.params.TudooPermissionChange;
 @Path("/tudoos")
 public class Tudoos extends Application{
 
-    /* TODO Useless?!
+    /*Currently useless.
 	@GET
     @Path("/get") //geht auch ""?
     @Produces(MediaType.APPLICATION_JSON)
@@ -76,7 +75,7 @@ public class Tudoos extends Application{
     @DELETE
     @Path("/remove")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removeUser(@HeaderParam("sessionID") String sessionID, SerializableParam tudooUUID){
+    public Response removeUser(@HeaderParam("sessionID") String sessionID, String tudooUUID){
         return Response.status(400).build();
     }
 }

@@ -2,6 +2,7 @@ package webtech2.rest;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
@@ -16,7 +17,13 @@ public class Echo extends Application{
 	
 	@GET
     @Path("/ping")
-    public Response registerUser(){
+    public Response plainPong(){
         return Response.ok("Pong!").build();
+    }
+	
+	@POST
+    @Path("/ping")
+    public Response echoPong(String bodyText){
+        return Response.ok("Pong: "+bodyText).build();
     }
 }

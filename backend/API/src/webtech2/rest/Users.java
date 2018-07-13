@@ -8,13 +8,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import webtech2.rest.temporary.SerializableUser;
 import webtech2.rest.temporary.SerializableUserID;
-import webtech2.rest.temporary.params.SerializableParam;
 
 /**
  * Created by Ilja on 26.06.2018.
@@ -26,7 +26,7 @@ public class Users extends Application{
     @GET
     @Path("/get") //geht auch ""?
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUser(SerializableParam userID){
+    public Response getUser(@QueryParam("id") String userID){
         //Call to JPA with id.
     	//return Response.status(404).build();
         return Response.ok(new SerializableUser()).build();
@@ -51,7 +51,7 @@ public class Users extends Application{
     @PUT
     @Path("/editDisplayName")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editDisplayName(@HeaderParam("sessionID") String sessionID, SerializableParam changeObject){
+    public Response editDisplayName(@HeaderParam("sessionID") String sessionID, String newName){
     	//return Response.ok().build(); //if it was changed
         return Response.status(400).build(); //if changeObject.sessionID bad
     }
@@ -59,7 +59,7 @@ public class Users extends Application{
     @PUT
     @Path("/editPassword")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editPassword(@HeaderParam("sessionID") String sessionID, SerializableParam changeObject){
+    public Response editPassword(@HeaderParam("sessionID") String sessionID, String newPassword){
     	//return Response.ok().build(); //if it was changed
         return Response.status(400).build(); //if changeObject.sessionID bad
     }
@@ -67,7 +67,7 @@ public class Users extends Application{
     @DELETE
     @Path("/remove")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removeUser(@HeaderParam("sessionID") String sessionID){ //TODO test this stuff if possible, use SessionID.java if it won't work.
+    public Response removeUser(@HeaderParam("sessionID") String sessionID){
     	//return Response.ok().build(); //if user was removed
         return Response.status(400).build(); //if sessionID bad
     }

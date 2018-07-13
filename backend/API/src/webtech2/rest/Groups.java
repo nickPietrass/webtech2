@@ -8,13 +8,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import webtech2.rest.temporary.SerializableGroup;
 import webtech2.rest.temporary.params.GroupKick;
-import webtech2.rest.temporary.params.SerializableParam;
 
 /**
  * Created by Ilja on 26.06.2018.
@@ -26,7 +26,7 @@ public class Groups extends Application{
     @GET
     @Path("/get") //geht auch ""?
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUser(@HeaderParam("sessionID") String sessionID, SerializableParam groupID){ //TODO test body:"" request with String groupID instead or SerializableParam
+    public Response getUser(@HeaderParam("sessionID") String sessionID, @QueryParam("id") String groupID){
         //Call to JPA with id.
         return Response.ok(new SerializableGroup()).build();
     }
