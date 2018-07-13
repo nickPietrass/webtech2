@@ -23,10 +23,10 @@ public class Todoo {
 	private User todooOwner;
 	
 	@OneToMany
-	private ArrayList<User> visibleBy;
+	private ArrayList<String> visibleBy;
 	
 	@OneToMany
-	private ArrayList<User> editableBy;
+	private ArrayList<String> editableBy;
 	
 	private String created;
 	
