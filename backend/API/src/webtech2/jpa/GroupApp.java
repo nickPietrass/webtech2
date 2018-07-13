@@ -26,6 +26,17 @@ public class GroupApp {
 		this.emf = emf;
 	}
 	
+	/**
+	 * Method used to close GroupApp's EntityManagerFactory.
+	 */
+	public void close() {
+		emf.close();
+	}
+	
+	/**
+	 * Create and persist a new group into the DB. Persists the owner first, if not already in the DB.
+	 * @param owner owner of the group
+	 */
 	public void registerNewGroup(User owner) {
 		EntityManager em = emf.createEntityManager();
     	App app = new App();
@@ -44,10 +55,19 @@ public class GroupApp {
     		em.flush();
     		em.getTransaction().commit();
     		
-    		User managedOwner = em.find(User.class, owner.getUserUUID());
+    		User managedOwner = em.find(User.class, owner.getLoginName());
+    		
+    		CriteriaBuilder cb = em.getCriteriaBuilder();
+    		CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
+    		Root<TodooGroup> g = cq.from(TodooGroup.class);
+    		
+    		cq.select(g).where(cb.equal(g.get("groupOwner"), managedOwner));
+    		TypedQuery<TodooGroup> query = em.createQuery(cq);
+    		
+    		int groupNumber = query.getResultList().size() + 1;
     		
     		TodooGroup group = new TodooGroup();
-        	group.setGroupName("group name");
+        	group.setGroupName(managedOwner.getDisplayName() + "'s group " + groupNumber);
         	group.setGroupOwner(managedOwner);
         	
         	persist(group);
@@ -57,6 +77,12 @@ public class GroupApp {
     	em.close();
 	}
 	
+	/**
+	 * Searches for a specific group by its name.
+	 * @param groupName group name to search for.
+	 * @return TodooGroup a group with the given name.
+	 * @throws NoDBEntryException if the group with the given name does not exist.
+	 */
 	public TodooGroup getGroupByName(String groupName) throws NoDBEntryException{
 		//create new EntityManager
     	EntityManager em = emf.createEntityManager();
@@ -80,6 +106,41 @@ public class GroupApp {
     	}
 	}
 	
+	/**
+	 * Get all groups, where the user is owner or member of the groups.
+	 * @param user user
+	 * @return ArrayList<TodooGroup> groups
+	 * @throws NoDBEntryException if the given user does note exist.
+	 */
+	public ArrayList<TodooGroup> getGroupsOfUser(User user) throws NoDBEntryException {
+		//create EntityManager and App
+		EntityManager em = emf.createEntityManager();
+		App app = new App();
+		
+		User managedUser = app.getUserByLoginNameAndPassword(user.getLoginName(), user.getPassword());
+		
+		//create criteria
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
+		
+		//set root and select
+		Root<TodooGroup> g = cq.from(TodooGroup.class);
+		Predicate userIsGroupOwner = cb.equal(g.get("groupOwner"), managedUser);
+		Predicate userIsGroupMember = cb.isMember(managedUser, g.get("groupMembers"));
+		Predicate userIsGroupOwnerOrGroupMember = cb.and(userIsGroupOwner, userIsGroupMember);
+		cq.select(g).where(userIsGroupOwnerOrGroupMember);
+		
+		//return results as ArrayList
+		TypedQuery<TodooGroup> query = em.createQuery(cq);
+		return new ArrayList<TodooGroup>(query.getResultList());
+	}
+	
+	/**
+	 * Adds a User to the group.
+	 * @param group group
+	 * @param user user to be added to the group
+	 * @throws NoDBEntryException if the group or user does not exist.
+	 */
 	public void addMemberToGroup(TodooGroup group, User user) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
 		App app = new App();
@@ -113,6 +174,12 @@ public class GroupApp {
     	em.close();
 	}
 	
+	/**
+	 * Deletes a member from the group.
+	 * @param group group.
+	 * @param user user to delete.
+	 * @throws NoDBEntryException if the group or user does not exist.
+	 */
 	public void deleteMemberFromGroup(TodooGroup group, User user) throws NoDBEntryException {
     	EntityManager em = emf.createEntityManager();
     	App app = new App();
@@ -122,10 +189,6 @@ public class GroupApp {
     	
     	User userToRemove = app.getUserByLoginNameAndPassword(user.getLoginName(), user.getPassword());
     	groupMembers.remove(userToRemove);
-    	
-    	for (User u : groupMembers) {
-    		System.out.println(u.getDisplayName());
-    	}
     	
     	//create update
     	CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -147,7 +210,11 @@ public class GroupApp {
     	tx.commit();
     }
 	
-	private void deleteGroup(TodooGroup group) {
+	/**
+	 * Deletes the whole group.
+	 * @param group group to be deleted.
+	 */
+	public void deleteGroup(TodooGroup group) {
     	EntityManager em = emf.createEntityManager();
     	
     	//create criteria delete

@@ -1,28 +1,18 @@
 package webtech2.jpa.entities;
 
-import java.util.UUID;
-
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class User {
 	
 	@Id
-	@GeneratedValue
-	private UUID userUUID;
-	
 	private String loginName;
 	private String password;
 	private String displayName;
 	private String created;
 	
 	
-	
-	public UUID getUserUUID() {
-		return userUUID;
-	}
 	public String getLoginName() {
 		return loginName;
 	}
@@ -36,9 +26,6 @@ public class User {
 		return created;
 	}
 	
-	public void setUserUUID(UUID userUUID) {
-		this.userUUID = userUUID;
-	}
 	public void setLoginName(String loginName) {
 		this.loginName = loginName;
 	}
