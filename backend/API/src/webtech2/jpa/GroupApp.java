@@ -53,8 +53,7 @@ public class GroupApp {
 		
     	//create new group
     	TodooGroup group = new TodooGroup();
-    	UUID groupUUID = UUID.randomUUID();
-    	group.setGroupUUID(groupUUID);
+    	group.setGroupUUID(UUID.randomUUID().toString());
     	group.setGroupOwner(user);
     	group.setGroupName(groupName);
     	group.setGroupMembers(new ArrayList<User>());
@@ -67,7 +66,7 @@ public class GroupApp {
     	CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
     	Root<TodooGroup> g = cq.from(TodooGroup.class);
     	
-    	Predicate groupUUIDMatches = cb.equal(g.get("groupUUID"), groupUUID);
+    	Predicate groupUUIDMatches = cb.equal(g.get("groupUUID"), group.getGroupUUID());
     	cq.select(g).where(groupUUIDMatches);
     	
     	//return result
@@ -82,16 +81,36 @@ public class GroupApp {
     	}
 	}
 	
-	public TodooGroup getGroupByID(String groupUUID) {
-		//TODO 
+	//Methods used to get something from the DB
+	
+	/**
+	 * Gets a TodooGroup from the DB.
+	 * @param groupUUID the group id
+	 * @return TodooGroup the group
+	 * @throws NoDBEntryException if the group with the given group ID does not exist.
+	 */
+	public TodooGroup getGroupByID(String groupID) throws NoDBEntryException {
+		EntityManager em = emf.createEntityManager();
+
+		//create criteria
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
+		Root<TodooGroup> user = cq.from(TodooGroup.class);
 		
-		TodooGroup group = new TodooGroup();
-		group.setGroupUUID(UUID.fromString(groupUUID));
-		group.setGroupOwner(new User());
-		group.setGroupMembers(new ArrayList<User>());
-		group.setGroupName("group name");
+		//set the predicate
+		Predicate groupUUIDMatches = cb.equal(user.get("groupUUID"), groupID);
 		
-		return group;
+		//select
+		cq.select(user).where(groupUUIDMatches);
+		TypedQuery<TodooGroup> query = em.createQuery(cq);
+		ArrayList<TodooGroup> result = new ArrayList<TodooGroup>(query.getResultList());
+		em.close();
+		
+		if (result.size() > 0) {
+			return result.get(0);
+		} else {
+			throw new NoDBEntryException("Group does not exist.");
+		}
 	}
 	
 	public ArrayList<TodooGroup> getGroupWhereOwnerIs(String loginName) {
