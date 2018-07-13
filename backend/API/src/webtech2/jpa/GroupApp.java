@@ -82,11 +82,11 @@ public class GroupApp {
     	}
 	}
 	
-	public TodooGroup getGroupByID(UUID groupUUID) {
+	public TodooGroup getGroupByID(String groupUUID) {
 		//TODO 
 		
 		TodooGroup group = new TodooGroup();
-		group.setGroupUUID(groupUUID);
+		group.setGroupUUID(UUID.fromString(groupUUID));
 		group.setGroupOwner(new User());
 		group.setGroupMembers(new ArrayList<User>());
 		group.setGroupName("group name");
@@ -133,7 +133,7 @@ public class GroupApp {
 	 * @param user user to be added to the group
 	 * @throws NoDBEntryException if the group or user does not exist.
 	 */
-	public void addMemberToGroup(UUID groupID, User user) throws NoDBEntryException {
+	public void addMemberToGroup(String groupID, User user) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
 		App app = new App();
     	
@@ -172,7 +172,7 @@ public class GroupApp {
 	 * @param user user to delete.
 	 * @throws NoDBEntryException if the group or user does not exist.
 	 */
-	public void deleteUserFromGroup(UUID groupID, User user) throws NoDBEntryException {
+	public void deleteUserFromGroup(String groupID, User user) throws NoDBEntryException {
     	EntityManager em = emf.createEntityManager();
     	App app = new App();
     	
@@ -206,7 +206,7 @@ public class GroupApp {
 	 * Deletes the whole group.
 	 * @param group group to be deleted.
 	 */
-	public void deleteGroup(UUID groupID) {
+	public void deleteGroup(String groupID) {
     	EntityManager em = emf.createEntityManager();
     	
     	//create criteria delete
