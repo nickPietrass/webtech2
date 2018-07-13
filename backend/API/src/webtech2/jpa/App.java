@@ -28,6 +28,7 @@ public class App {
 	
 	private EntityManagerFactory emf;
 	private GroupApp groupApp;
+	private TudooApp tudooApp;
 	
 	public static App instance;
 	
@@ -37,6 +38,7 @@ public class App {
 	public App() {
 		this.emf = Persistence.createEntityManagerFactory("tudoo-persistence-unit");
 		this.groupApp = new GroupApp(emf);
+		this.tudooApp = new TudooApp(emf);
 		instance = this;
 	}
 	
@@ -44,16 +46,25 @@ public class App {
 	 * Method used to close App
 	 */
 	public void close() {
-		emf.close();
 		groupApp.close();
+		tudooApp.close();
+		emf.close();
 	}
 	
 	/**
 	 * Get the groupApp
 	 * @return groupApp
 	 */
-	public GroupApp getGroup() {
+	public GroupApp getGroupApp() {
 		return groupApp;
+	}
+	
+	/**
+	 * Get the tudooApp
+	 * @return tudooApp
+	 */
+	public TudooApp getTudooApp() {
+		return tudooApp;
 	}
 	
 	//Methods used to persist something in the DB
