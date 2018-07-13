@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 @Entity
-public class TodooGroup {
+public class TudooGroup {
 	
 	@Id
 	private String groupUUID;

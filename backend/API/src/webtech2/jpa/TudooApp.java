@@ -12,7 +12,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import webtech2.jpa.entities.Tudoo;
-import webtech2.jpa.entities.TodooGroup;
+import webtech2.jpa.entities.TudooGroup;
 import webtech2.jpa.entities.User;
 import webtech2.jpa.exceptions.NoDBEntryException;
 
@@ -28,7 +28,7 @@ public class TudooApp {
 		emf.close();
 	}
 	
-	public TodooGroup registerNewTodoo(User owner) throws NoDBEntryException {
+	public TudooGroup registerNewTodoo(User owner) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
 		App app = new App();
 		
@@ -42,7 +42,7 @@ public class TudooApp {
 		TypedQuery<Tudoo> query = em.createQuery(cq);
 		
 		//TODO
-		return new TodooGroup();
+		return new TudooGroup();
 	}
 	
 	public ArrayList<Tudoo> getAllVisibleTodoosOfUser(String loginName) {

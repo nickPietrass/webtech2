@@ -15,7 +15,7 @@ import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import webtech2.jpa.entities.TodooGroup;
+import webtech2.jpa.entities.TudooGroup;
 import webtech2.jpa.entities.User;
 import webtech2.jpa.exceptions.NoDBEntryException;
 
@@ -45,7 +45,7 @@ public class GroupApp {
 	 * @return TodooGroup the newly created group.
 	 * @throws NoDBEntryException if the user does not exist or, for some reason, the persisted group can not be found.
 	 */
-	public TodooGroup registerNewTodooGroup(String groupName, String loginName) throws NoDBEntryException {
+	public TudooGroup registerNewTodooGroup(String groupName, String loginName) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
     	App app = new App();
     	
@@ -53,7 +53,7 @@ public class GroupApp {
     	User user = app.getUserByLoginName(loginName);
 		
     	//create new group
-    	TodooGroup group = new TodooGroup();
+    	TudooGroup group = new TudooGroup();
     	group.setGroupUUID(UUID.randomUUID().toString());
     	group.setGroupOwner(user);
     	group.setGroupName(groupName);
@@ -64,15 +64,15 @@ public class GroupApp {
     	
     	//get the new group from the DB
     	CriteriaBuilder cb = em.getCriteriaBuilder();
-    	CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
-    	Root<TodooGroup> g = cq.from(TodooGroup.class);
+    	CriteriaQuery<TudooGroup> cq = cb.createQuery(TudooGroup.class);
+    	Root<TudooGroup> g = cq.from(TudooGroup.class);
     	
     	Predicate groupUUIDMatches = cb.equal(g.get("groupUUID"), group.getGroupUUID());
     	cq.select(g).where(groupUUIDMatches);
     	
     	//return result
-    	TypedQuery<TodooGroup> query = em.createQuery(cq);
-    	ArrayList<TodooGroup> result = new ArrayList<TodooGroup>(query.getResultList());
+    	TypedQuery<TudooGroup> query = em.createQuery(cq);
+    	ArrayList<TudooGroup> result = new ArrayList<TudooGroup>(query.getResultList());
     	em.close();
     	
     	if (result.size() > 0) {
@@ -90,21 +90,21 @@ public class GroupApp {
 	 * @return TodooGroup the group
 	 * @throws NoDBEntryException if the group with the given group ID does not exist.
 	 */
-	public TodooGroup getGroupByID(String groupID) throws NoDBEntryException {
+	public TudooGroup getGroupByID(String groupID) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
 
 		//create criteria
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
-		Root<TodooGroup> user = cq.from(TodooGroup.class);
+		CriteriaQuery<TudooGroup> cq = cb.createQuery(TudooGroup.class);
+		Root<TudooGroup> user = cq.from(TudooGroup.class);
 		
 		//set the predicate
 		Predicate groupUUIDMatches = cb.equal(user.get("groupUUID"), groupID);
 		
 		//select
 		cq.select(user).where(groupUUIDMatches);
-		TypedQuery<TodooGroup> query = em.createQuery(cq);
-		ArrayList<TodooGroup> result = new ArrayList<TodooGroup>(query.getResultList());
+		TypedQuery<TudooGroup> query = em.createQuery(cq);
+		ArrayList<TudooGroup> result = new ArrayList<TudooGroup>(query.getResultList());
 		em.close();
 		
 		if (result.size() > 0) {
@@ -120,7 +120,7 @@ public class GroupApp {
 	 * @return ArrayList<TodooGroup> groups with the given user as the owner.
 	 * @throws NoDBEntryException if the user does not exist.
 	 */
-	public ArrayList<TodooGroup> getGroupsWhereOwnerIs(String loginName) throws NoDBEntryException {
+	public ArrayList<TudooGroup> getGroupsWhereOwnerIs(String loginName) throws NoDBEntryException {
     	EntityManager em = emf.createEntityManager();
     	App app = new App();
     	
@@ -128,16 +128,16 @@ public class GroupApp {
 
 		//create criteria
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
-		Root<TodooGroup> user = cq.from(TodooGroup.class);
+		CriteriaQuery<TudooGroup> cq = cb.createQuery(TudooGroup.class);
+		Root<TudooGroup> user = cq.from(TudooGroup.class);
 		
 		//set the predicate
 		Predicate groupUUIDMatches = cb.equal(user.get("groupOwner"), managedUser);
 		
 		//select
 		cq.select(user).where(groupUUIDMatches);
-		TypedQuery<TodooGroup> query = em.createQuery(cq);
-		ArrayList<TodooGroup> result = new ArrayList<TodooGroup>(query.getResultList());
+		TypedQuery<TudooGroup> query = em.createQuery(cq);
+		ArrayList<TudooGroup> result = new ArrayList<TudooGroup>(query.getResultList());
 		em.close();
 		
 		return result;
@@ -153,7 +153,7 @@ public class GroupApp {
 		EntityManager em = emf.createEntityManager();
 		App app = new App();
     	
-    	TodooGroup todooGroup = getGroupByID(groupID);
+    	TudooGroup todooGroup = getGroupByID(groupID);
     	ArrayList<User> groupMembers = todooGroup.getGroupMembers();
     	boolean containsUser = false;
     	
@@ -171,10 +171,10 @@ public class GroupApp {
     	
     	//create update
     	CriteriaBuilder cb = em.getCriteriaBuilder();
-    	CriteriaUpdate<TodooGroup> update = cb.createCriteriaUpdate(TodooGroup.class);
+    	CriteriaUpdate<TudooGroup> update = cb.createCriteriaUpdate(TudooGroup.class);
     	
     	//set the root class
-    	Root<TodooGroup> g = update.from(TodooGroup.class);
+    	Root<TudooGroup> g = update.from(TudooGroup.class);
     	
     	//set the update and where clause
     	update.set("groupMembers", groupMembers);
@@ -202,7 +202,7 @@ public class GroupApp {
     	EntityManager em = emf.createEntityManager();
     	App app = new App();
     	
-    	TodooGroup todooGroup = getGroupByID(groupID);
+    	TudooGroup todooGroup = getGroupByID(groupID);
     	ArrayList<User> groupMembers = todooGroup.getGroupMembers();
     	
     	User userToRemove = app.getUserByLoginName(user.getLoginName());
@@ -210,10 +210,10 @@ public class GroupApp {
     	
     	//create update
     	CriteriaBuilder cb = em.getCriteriaBuilder();
-    	CriteriaUpdate<TodooGroup> update = cb.createCriteriaUpdate(TodooGroup.class);
+    	CriteriaUpdate<TudooGroup> update = cb.createCriteriaUpdate(TudooGroup.class);
     	
     	//set the root class
-    	Root<TodooGroup> g = update.from(TodooGroup.class);
+    	Root<TudooGroup> g = update.from(TudooGroup.class);
     	
     	//set the update and where clause
     	update.set("groupMembers", groupMembers);
@@ -237,8 +237,8 @@ public class GroupApp {
     	
     	//create criteria delete
     	CriteriaBuilder cb = em.getCriteriaBuilder();
-    	CriteriaDelete<TodooGroup> cd = cb.createCriteriaDelete(TodooGroup.class);
-    	Root<TodooGroup> g = cd.from(TodooGroup.class);
+    	CriteriaDelete<TudooGroup> cd = cb.createCriteriaDelete(TudooGroup.class);
+    	Root<TudooGroup> g = cd.from(TudooGroup.class);
     	
     	//set predicate
 		Predicate sameGroupUUID = cb.equal(g.get("groupUUID"), groupID);
