@@ -239,7 +239,7 @@ public class App {
 		ArrayList<User> result = new ArrayList<User>(query.getResultList());
 		em.close();
 		
-		return result.size() == 0;
+		return result.size() > 0;
 	}
 	
 	/**
