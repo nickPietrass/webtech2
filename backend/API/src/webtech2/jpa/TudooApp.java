@@ -13,6 +13,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
@@ -119,8 +120,30 @@ public class TudooApp {
 		//TODO
 	}
 	
-	public void deleteTodoo(UUID todooID) {
-		//TODO
+	public void deleteTodoo(String tudooID) throws NoDBEntryException {
+		if (tudooDoesNotExist(tudooID)) {
+    		throw new NoDBEntryException();
+    	}
+    	
+    	EntityManager em = emf.createEntityManager();
+		
+    	//create criteria delete
+    	CriteriaBuilder cb = em.getCriteriaBuilder();
+    	CriteriaDelete<Tudoo> cd = cb.createCriteriaDelete(Tudoo.class);
+    	Root<Tudoo> user = cd.from(Tudoo.class);
+    	
+    	//set predicate
+		Predicate TudooIDMatches = cb.equal(user.get("tudooUUID"), tudooID);
+		
+		//select
+		cd.where(TudooIDMatches);
+		
+		//delete
+		EntityTransaction tx = em.getTransaction();
+		tx.begin();
+		em.createQuery(cd).executeUpdate();
+		tx.commit();
+		em.close();
 	}
 	
 	
@@ -140,4 +163,16 @@ public class TudooApp {
 		tx.commit();
 		em.close();
 	}
+	
+	public boolean tudooDoesNotExist(String tudooID) {
+    	//create EntityManager and criteria
+		EntityManager em = emf.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Tudoo> cq = cb.createQuery(Tudoo.class);
+		Root<Tudoo> t = cq.from(Tudoo.class);
+		cq.select(t).where(cb.equal(t.get("tudooUUID"), tudooID));
+		
+		TypedQuery<Tudoo> query = em.createQuery(cq);
+		return query.getResultList().size() == 0;
+    }
 }
