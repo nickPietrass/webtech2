@@ -29,12 +29,15 @@ public class App {
 	private EntityManagerFactory emf;
 	private GroupApp group;
 	
+	public static App instance;
+	
 	/**
 	 * Standard constructor
 	 */
 	public App() {
 		this.emf = Persistence.createEntityManagerFactory("tudoo-persistence-unit");
 		this.group = new GroupApp(emf);
+		instance = this;
 	}
 	
 	/**
