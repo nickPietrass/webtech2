@@ -1,5 +1,8 @@
 package webtech2.jpa;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -25,7 +28,7 @@ public class TodooApp {
 		emf.close();
 	}
 	
-	public void registerNewTodoo(User owner) throws NoDBEntryException {
+	public TodooGroup registerNewTodoo(User owner) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
 		App app = new App();
 		
@@ -38,6 +41,33 @@ public class TodooApp {
 		cq.select(t).where(cb.equal(t.get("todooOwner"), managedUser));
 		TypedQuery<Todoo> query = em.createQuery(cq);
 		
+		//TODO
+		return new TodooGroup();
+	}
+	
+	public ArrayList<Todoo> getAllVisibleTodoosOfUser(String loginName) {
+		//TODO
 		
+		return new ArrayList<Todoo>();
+	}
+	
+	public void changeTodooContent(UUID todooID, String title, String content) {
+		//TODO
+	}
+	
+	public void addUserOrGroupToTodoo(UUID todooID, String loginName) {
+		//TODO
+	}
+	
+	public void changeUserOrGroupPermissionToVisibleByOnly(UUID todooID, String loginName) {
+		//TODO
+	}
+	
+	public void deleteUserOrGroupFromTodoo(UUID todooID, String loginName) {
+		//TODO
+	}
+	
+	public void deleteTodoo(UUID todooID) {
+		//TODO
 	}
 }
