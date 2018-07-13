@@ -14,6 +14,8 @@ import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import webtech2.jpa.entities.Tudoo;
@@ -74,8 +76,35 @@ public class TudooApp {
 		return new ArrayList<Tudoo>();
 	}
 	
-	public void changeTodooContent(UUID todooID, String title, String content) {
-		//TODO
+	public void changeTudooContent(UUID tudooID, String newTitle, String newContent) {
+		//create EntityManager
+			EntityManager em = emf.createEntityManager();
+			
+			//create update
+	    	CriteriaBuilder cb = em.getCriteriaBuilder();
+	    	CriteriaUpdate<Tudoo> update = cb.createCriteriaUpdate(Tudoo.class);
+	    	
+	    	//set the root class
+	    	Root<Tudoo> tudoo = update.from(Tudoo.class);
+
+	    	//set the update and where clause
+	    	update.set("title", newTitle);
+	    	Predicate tudooIDMatches = cb.equal(tudoo.get("todooUUID"), tudooID);
+	    	update.where(tudooIDMatches);
+	    	
+	    	EntityTransaction tx = em.getTransaction();
+	    	tx.begin();
+	    	em.createQuery(update).executeUpdate();
+	    	tx.commit();
+	    	
+	    	update.set("content", newContent);
+	    	update.where(tudooIDMatches);
+	    	
+	    	tx.begin();
+	    	em.createQuery(update).executeUpdate();
+	    	tx.commit();
+	    	
+	    	em.close();
 	}
 	
 	public void addUserOrGroupToTodoo(UUID todooID, String loginName) {
