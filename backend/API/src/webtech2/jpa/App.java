@@ -29,16 +29,26 @@ public class App {
 	private EntityManagerFactory emf;
 	private GroupApp group;
 	
+	/**
+	 * Standard constructor
+	 */
 	public App() {
 		this.emf = Persistence.createEntityManagerFactory("tudoo-persistence-unit");
 		this.group = new GroupApp(emf);
 	}
 	
+	/**
+	 * Method used to close App
+	 */
 	public void close() {
 		emf.close();
 		group.close();
 	}
 	
+	/**
+	 * Get the groupApp
+	 * @return groupApp
+	 */
 	public GroupApp getGroup() {
 		return group;
 	}
@@ -111,6 +121,7 @@ public class App {
 	 * Changes the user password.
 	 * @param loginName login name of the user.
 	 * @param newPassword new password of the user.
+	 * @throws NoDBEntryException if the user does not exist.
 	 */
 	public void changeUserPassword(String loginName, String newPassword) throws NoDBEntryException {
 		if (userIsNotInDB(loginName)) {
@@ -180,6 +191,7 @@ public class App {
 	 * Deletes a user from the DB.
 	 * @param loginName the users loginName.
 	 * @param password the users password.
+	 * @throws NoDBEntryException if the user does not exist.
 	 */
 	public void deleteUser(String loginName) throws NoDBEntryException {
 		if (userIsNotInDB(loginName)) {
@@ -210,6 +222,11 @@ public class App {
 	
 	//Helper methods
 	
+	/**
+	 * Checks if the user is not in the DB.
+	 * @param loginName login name of the user
+	 * @return true if user is not in the DB, else false.
+	 */
 	public boolean userIsNotInDB(String loginName) {
 		//create EntityManager and criteria
 		EntityManager em = emf.createEntityManager();
@@ -227,7 +244,7 @@ public class App {
 	 * @param loginName search for that login name.
 	 * @return true if it is taken, false else.
 	 */
-	private boolean loginNameIsAlreadyTaken(String loginName) {
+	public boolean loginNameIsAlreadyTaken(String loginName) {
 		//check if the login name is already taken
 		EntityManager em = emf.createEntityManager();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
