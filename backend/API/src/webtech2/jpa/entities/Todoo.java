@@ -9,7 +9,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Todo {
+public class Todoo {
 	
 	@Id
 	private UUID todoUUID;
