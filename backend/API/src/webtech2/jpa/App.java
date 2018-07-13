@@ -36,24 +36,13 @@ public class App {
 	
 	public void close() {
 		emf.close();
+		group.close();
 	}
 	
 	//Methods used to persist something in the DB
 	
-	/**
-	 * Persists a new user in the database. This method will check if the user is already in the database.
-	 * @param user new user to be added to the database.
-	 * @throws DuplicateDBEntryException if the given user's UUID already exists.
-	 */
-	public void registerNewUser(User user) throws DuplicateDBEntryException{
-		EntityManager em = emf.createEntityManager();
-		
-		//Checks if the user is already in the DB via the userUUID
-		if (em.find(User.class, user.getUserUUID()).equals(null) ) {
-			persist(user);
-		} else {
-			throw new DuplicateDBEntryException("User already exists");
-		}
+	public GroupApp getGroup() {
+		return group;
 	}
 	
 	/**
@@ -68,12 +57,10 @@ public class App {
 		}
 		
 		User user = new User();
-		UUID userUUID = UUID.randomUUID();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
 		Date date = Calendar.getInstance().getTime();
 		String created = dateFormat.format(date);
 		
-		user.setUserUUID(userUUID);
 		user.setLoginName(loginName);
 		user.setPassword(password);
 		user.setDisplayName(displayName);

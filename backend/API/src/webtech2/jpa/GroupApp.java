@@ -55,7 +55,7 @@ public class GroupApp {
     		em.flush();
     		em.getTransaction().commit();
     		
-    		User managedOwner = em.find(User.class, owner.getUserUUID());
+    		User managedOwner = em.find(User.class, owner.getLoginName());
     		
     		CriteriaBuilder cb = em.getCriteriaBuilder();
     		CriteriaQuery<TodooGroup> cq = cb.createQuery(TodooGroup.class);
@@ -214,7 +214,7 @@ public class GroupApp {
 	 * Deletes the whole group.
 	 * @param group group to be deleted.
 	 */
-	private void deleteGroup(TodooGroup group) {
+	public void deleteGroup(TodooGroup group) {
     	EntityManager em = emf.createEntityManager();
     	
     	//create criteria delete
