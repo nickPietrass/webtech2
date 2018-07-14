@@ -24,7 +24,7 @@ public class Tudoos extends Application{
 
     /*Currently useless.
 	@GET
-    @Path("/get") //geht auch ""?
+    @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
     public Object getTudoo(@QueryParam("id") String id){
         //Call to JPA with id.

@@ -24,7 +24,7 @@ import webtech2.rest.temporary.params.GroupKick;
 public class Groups extends Application{
 
     @GET
-    @Path("/get") //geht auch ""?
+    @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@HeaderParam("sessionID") String sessionID, @QueryParam("id") String groupID){
         //Call to JPA with id.
