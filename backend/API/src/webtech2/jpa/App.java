@@ -20,6 +20,8 @@ import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import webtech2.jpa.entities.Tudoo;
+import webtech2.jpa.entities.TudooGroup;
 import webtech2.jpa.entities.User;
 import webtech2.jpa.exceptions.DuplicateDBEntryException;
 import webtech2.jpa.exceptions.NoDBEntryException;
@@ -208,28 +210,60 @@ public class App {
 	 * @throws NoDBEntryException if the user does not exist.
 	 */
 	public void deleteUser(String loginName) throws NoDBEntryException {
+		EntityManager em = emf.createEntityManager();
+		
 		if (userIsNotInDB(loginName)) {
+			em.close();
 			throw new NoDBEntryException("Error deleting user. User does not exist.");
 		}
 		
-		EntityManager em = emf.createEntityManager();
+		User user = getUserByLoginName(loginName);
+		ArrayList<Tudoo> visibleTudoos = tudooApp.getAllVisibleTudoosOfUser(loginName);
+		ArrayList<TudooGroup> groups = groupApp.getGroupsWhereUserIsPartOf(loginName);
 		
-    	//create criteria delete
+		for (Tudoo tudoo : visibleTudoos) {
+			tudooApp.deleteUserOrGroupFromTudoo(tudoo.getTudooUUID(), loginName);
+		}
+		for (TudooGroup g : groups) {
+			groupApp.deleteUserFromGroup(g.getGroupUUID(), loginName);
+		}
+		
+		//Removes groups where user is the owner
+		//create criteria delete
     	CriteriaBuilder cb = em.getCriteriaBuilder();
-    	CriteriaDelete<User> cd = cb.createCriteriaDelete(User.class);
-    	Root<User> user = cd.from(User.class);
+    	CriteriaDelete<TudooGroup> cdg = cb.createCriteriaDelete(TudooGroup.class);
+    	Root<TudooGroup> g = cdg.from(TudooGroup.class);
     	
     	//set predicate
-		Predicate loginNameMatches = cb.equal(user.get("loginName"), loginName);
+		Predicate userIsOwnerOfGroup = cb.equal(g.get("groupOwner"), user);
 		
 		//select
-		cd.where(loginNameMatches);
+		cdg.where(userIsOwnerOfGroup);
 		
 		//delete
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
-		em.createQuery(cd).executeUpdate();
+		em.createQuery(cdg).executeUpdate();
 		tx.commit();
+		
+		//Removes the user from the user table
+    	//create criteria delete
+    	cb = em.getCriteriaBuilder();
+    	CriteriaDelete<User> cdu = cb.createCriteriaDelete(User.class);
+    	Root<User> u = cdu.from(User.class);
+    	
+    	//set predicate
+		Predicate loginNameMatches = cb.equal(u.get("loginName"), loginName);
+		
+		//select
+		cdu.where(loginNameMatches);
+		
+		//delete
+		tx = em.getTransaction();
+		tx.begin();
+		em.createQuery(cdu).executeUpdate();
+		tx.commit();
+		
 		em.close();
 	}
 	
