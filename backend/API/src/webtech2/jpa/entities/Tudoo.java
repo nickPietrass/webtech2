@@ -13,27 +13,23 @@ import javax.persistence.OneToOne;
 public class Tudoo {
 	
 	@Id
-	@GeneratedValue
-	private UUID todooUUID;
+	private String tudooUUID;
 	
 	private String title;
 	private String content;
 	
 	@OneToOne
-	private User todooOwner;
-	
-	@OneToMany
+	private User tudooOwner;
+
 	private ArrayList<String> visibleBy;
-	
-	@OneToMany
 	private ArrayList<String> editableBy;
 	
 	private String created;
 	
 	
 	
-	public UUID getTodooUUID() {
-		return todooUUID;
+	public String getTudooUUID() {
+		return tudooUUID;
 	}
 	public String getTitle() {
 		return title;
@@ -41,8 +37,8 @@ public class Tudoo {
 	public String getContent() {
 		return content;
 	}
-	public User getTodooOwner() {
-		return todooOwner;
+	public User getTudooOwner() {
+		return tudooOwner;
 	}
 	public ArrayList<String> getVisibleBy() {
 		return visibleBy;
@@ -54,8 +50,8 @@ public class Tudoo {
 		return created;
 	}
 	
-	public void setTodooUUID(UUID todoUUID) {
-		this.todooUUID = todoUUID;
+	public void setTudooUUID(String todoUUID) {
+		this.tudooUUID = todoUUID;
 	}
 	public void setTitle(String title) {
 		this.title = title;
@@ -63,8 +59,8 @@ public class Tudoo {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public void setTodooOwner(User todoOwner) {
-		this.todooOwner = todoOwner;
+	public void setTudooOwner(User todoOwner) {
+		this.tudooOwner = todoOwner;
 	}
 	public void setVisibleBy(ArrayList<String> visibleBy) {
 		this.visibleBy = visibleBy;
