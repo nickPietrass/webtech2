@@ -71,10 +71,27 @@ public class TudooApp {
 		return query.getSingleResult();
 	}
 	
-	public ArrayList<Tudoo> getAllVisibleTodoosOfUser(String loginName) {
-		//TODO
+	public ArrayList<Tudoo> getAllVisibleTudoosOfUser(String loginName) {
+		EntityManager em = emf.createEntityManager();
 		
-		return new ArrayList<Tudoo>();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Tudoo> cq = cb.createQuery(Tudoo.class);
+		Root<Tudoo> tudoo = cq.from(Tudoo.class);
+		
+		cq.select(tudoo);
+		
+		TypedQuery<Tudoo> query = em.createQuery(cq);
+		ArrayList<Tudoo> queryResult = new ArrayList<Tudoo>(query.getResultList());
+		ArrayList<Tudoo> result = new ArrayList<Tudoo>();
+		
+		for (Tudoo t : queryResult) {
+			if (t.getTudooOwner().getLoginName() == loginName || t.getVisibleBy().contains(loginName)) {
+				result.add(t);
+			}
+		}
+		
+		em.close();
+		return result;
 	}
 	
 	public void changeTudooContent(UUID tudooID, String newTitle, String newContent) {
