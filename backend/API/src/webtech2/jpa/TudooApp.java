@@ -108,8 +108,40 @@ public class TudooApp {
 	    	em.close();
 	}
 	
-	public void addUserOrGroupToTodoo(UUID todooID, String loginName) {
-		//TODO
+	public void addUserOrGroupToTudoo(String tudooID, String id) throws NoDBEntryException {
+		EntityManager em = emf.createEntityManager();
+		App app = new App();
+    	
+		if (tudooDoesNotExist(tudooID)) {
+			app.close();
+			em.close();
+			throw new NoDBEntryException("Tudoo does not exist.");
+		}
+		
+    	Tudoo tudoo = getTudooByID(tudooID);
+    	
+    	if (app.userIsNotInDB(id) && app.getGroupApp().groupIsNotInDB(id)) {
+    		throw new NoDBEntryException("id is invalid");
+    	}
+    	
+    	ArrayList<String> newVisibleBy = tudoo.getVisibleBy();
+    	if (!newVisibleBy.contains(id)) {
+    		newVisibleBy.add(id);
+    	}
+    	tudoo.setVisibleBy(newVisibleBy);
+    	
+    	ArrayList<String> newEditableBy = tudoo.getEditableBy();
+    	if (!newEditableBy.contains(id)) {
+    		newEditableBy.add(id);
+    	}
+    	tudoo.setEditableBy(newEditableBy);
+    	
+    	em.getTransaction().begin();
+    	em.merge(tudoo);
+    	em.flush();
+    	em.getTransaction().commit();
+    	
+    	em.close();
 	}
 	
 	public void changeUserOrGroupPermissionToVisibleByOnly(UUID todooID, String loginName) {
@@ -174,5 +206,29 @@ public class TudooApp {
 		
 		TypedQuery<Tudoo> query = em.createQuery(cq);
 		return query.getResultList().size() == 0;
+    }
+	
+	public Tudoo getTudooByID(String tudooID) throws NoDBEntryException {
+    	EntityManager em = emf.createEntityManager();
+		
+		//create criteria
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Tudoo> cq = cb.createQuery(Tudoo.class);
+		Root<Tudoo> user = cq.from(Tudoo.class);
+		
+		//set the predicate
+		Predicate tudooIDMatches = cb.equal(user.get("todooUUID"), tudooID);
+		
+		//select
+		cq.select(user).where(tudooIDMatches);
+		TypedQuery<Tudoo> query = em.createQuery(cq);
+		ArrayList<Tudoo> result = new ArrayList<Tudoo>(query.getResultList());
+		em.close();
+		
+		if (result.size() > 0) {
+			return result.get(0);
+		} else {
+			throw new NoDBEntryException("The Tudoo does not exist.");
+		}
     }
 }
