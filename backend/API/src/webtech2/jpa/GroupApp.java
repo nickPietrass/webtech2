@@ -246,4 +246,16 @@ public class GroupApp {
 		tx.commit();
 		em.close();
 	}
+	
+	public boolean groupIsNotInDB(String groupID) {
+    	//create EntityManager and criteria
+		EntityManager em = emf.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<TudooGroup> cq = cb.createQuery(TudooGroup.class);
+		Root<TudooGroup> g = cq.from(TudooGroup.class);
+		cq.select(g).where(cb.equal(g.get("groupUUID"), groupID));
+		
+		TypedQuery<TudooGroup> query = em.createQuery(cq);
+		return query.getResultList().size() == 0;
+    }
 }
