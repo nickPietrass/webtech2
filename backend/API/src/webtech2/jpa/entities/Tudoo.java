@@ -43,7 +43,7 @@ public class Tudoo {
 	public ArrayList<String> getVisibleBy() {
 		return visibleBy;
 	}
-	public ArrayList<String> editableBy() {
+	public ArrayList<String> getEditableBy() {
 		return editableBy;
 	}
 	public String getCreationDate() {
