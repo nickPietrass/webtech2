@@ -130,6 +130,12 @@ public class GroupApp {
     	EntityManager em = emf.createEntityManager();
     	App app = new App();
     	
+    	if (app.userIsNotInDB(loginName)) {
+    		app.close();
+    		em.close();
+    		throw new NoDBEntryException("User does not exist");
+    	}
+    	
     	User managedUser = app.getUserByLoginName(loginName);
 
 		//create criteria
@@ -147,6 +153,37 @@ public class GroupApp {
 		em.close();
 		
 		return result;
+	}
+	
+	public ArrayList<TudooGroup> getGroupsWhereUserIsPartOf(String loginName) throws NoDBEntryException {
+		EntityManager em = emf.createEntityManager();
+		App app = new App();
+		
+		if (app.userIsNotInDB(loginName)) {
+    		app.close();
+    		em.close();
+    		throw new NoDBEntryException("User does not exist");
+    	}
+		
+		ArrayList<TudooGroup> groups = getGroupsWhereOwnerIs(loginName);
+	
+		//create criteria
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<TudooGroup> cq = cb.createQuery(TudooGroup.class);
+		Root<TudooGroup> g = cq.from(TudooGroup.class);
+		
+		//select
+		cq.select(g);
+		TypedQuery<TudooGroup> query = em.createQuery(cq);
+		ArrayList<TudooGroup> result = new ArrayList<TudooGroup>(query.getResultList());
+		
+		for (TudooGroup group : result) {
+			if (group.getGroupMembers().contains(loginName)) {
+				groups.add(group);
+			}
+		}
+		
+		return groups;
 	}
 	
 	/**
