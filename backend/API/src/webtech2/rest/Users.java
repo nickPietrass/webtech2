@@ -13,6 +13,12 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
+
 import webtech2.jpa.entities.User;
 import webtech2.jpa.exceptions.DuplicateDBEntryException;
 import webtech2.jpa.exceptions.NoDBEntryException;
@@ -63,8 +69,13 @@ public class Users extends Application{
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
     public Response loginUser(SerializableUserID idObject){ //TODO Shiro stuff, also if user already logged in, give him new sessionID
-    	//return Response.status(400).build(); //Falscher Username oder Passwort
-    	return Response.ok("myCoolSessionID").build();
+    	Subject currentUser = AuthRealm.getCurrentSubject();
+    	try {
+			AuthRealm.loginUser(idObject.getLoginName(), idObject.getPassword());
+		} catch (Exception e) {
+			return Response.status(400).build();
+		}
+    	return Response.ok().build();
     }
     
     @PUT

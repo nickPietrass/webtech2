@@ -80,6 +80,14 @@
     	<groupId>mysql</groupId>
     	<artifactId>mysql-connector-java</artifactId>
     </dependency>
+    <dependency>
+    	<groupId>org.apache.shiro</groupId>
+    	<artifactId>shiro-core</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.shiro</groupId>
+    	<artifactId>shiro-web</artifactId>
+    </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>
@@ -117,6 +125,16 @@
       	<groupId>mysql</groupId>
       	<artifactId>mysql-connector-java</artifactId>
       	<version>8.0.11</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.shiro</groupId>
+      	<artifactId>shiro-core</artifactId>
+      	<version>1.4.0</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.shiro</groupId>
+      	<artifactId>shiro-web</artifactId>
+      	<version>1.4.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
