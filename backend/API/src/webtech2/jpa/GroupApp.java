@@ -50,14 +50,20 @@ public class GroupApp {
     	App app = new App();
     	
     	//get user from the DB
-    	User user = app.getUserByLoginName(loginName);
+    	if (app.userIsNotInDB(loginName)) {
+    		app.close();
+    		em.close();
+    		throw new NoDBEntryException("User does not exist.");
+    	}
+    	
+        User user = app.getUserByLoginName(loginName);
 		
     	//create new group
     	TudooGroup group = new TudooGroup();
     	group.setGroupUUID(UUID.randomUUID().toString());
     	group.setGroupOwner(user);
     	group.setGroupName(groupName);
-    	group.setGroupMembers(new ArrayList<User>());
+    	group.setGroupMembers(new ArrayList<String>());
     	
     	//persist new group
     	persist(group);
@@ -152,43 +158,24 @@ public class GroupApp {
 	public void addMemberToGroup(String groupID, String loginName) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
 		App app = new App();
+		
+		if (app.userIsNotInDB(loginName)) {
+			em.close();
+			app.close();
+			throw new NoDBEntryException("User does not exist.");
+		}
     	
-    	TudooGroup todooGroup = getGroupByID(groupID);
-    	ArrayList<User> groupMembers = todooGroup.getGroupMembers();
-    	boolean containsUser = false;
+    	TudooGroup existingGroup = getGroupByID(groupID);
     	
-    	for (int i = 0; i < groupMembers.size(); i++) {
-    		if (groupMembers.get(i).getLoginName() == loginName) {
-    			containsUser = true;
-    		}
-    	}
+    	ArrayList<String> newMemberList = existingGroup.getGroupMembers();
+    	newMemberList.add(loginName);
+    	existingGroup.setGroupMembers(newMemberList);
     	
-    	if (containsUser) {
-    		app.close();
-    		em.close();
-    		return;
-    	}
+    	em.getTransaction().begin();
+    	em.merge(existingGroup);
+    	em.flush();
+    	em.getTransaction().commit();
     	
-    	//create update
-    	CriteriaBuilder cb = em.getCriteriaBuilder();
-    	CriteriaUpdate<TudooGroup> update = cb.createCriteriaUpdate(TudooGroup.class);
-    	
-    	//set the root class
-    	Root<TudooGroup> g = update.from(TudooGroup.class);
-    	
-    	//set the update and where clause
-    	update.set("groupMembers", groupMembers);
-    	Predicate sameGroupUUID = cb.equal(g.get("groupName"), "group name");
-    	update.where(sameGroupUUID);
-    	
-    	//update group members
-    	EntityTransaction tx = em.getTransaction();
-    	tx.begin();
-    	//em.createQuery(update).executeUpdate();
-    	todooGroup.setGroupMembers(groupMembers);
-    	tx.commit();
-    	
-    	app.close();
     	em.close();
 	}
 	
@@ -198,34 +185,26 @@ public class GroupApp {
 	 * @param user user to delete.
 	 * @throws NoDBEntryException if the group or user does not exist.
 	 */
-	public void deleteUserFromGroup(String groupID, User user) throws NoDBEntryException {
-    	EntityManager em = emf.createEntityManager();
-    	App app = new App();
+	public void deleteUserFromGroup(String groupID, String loginName) throws NoDBEntryException {
+		EntityManager em = emf.createEntityManager();
+		App app = new App();
     	
-    	TudooGroup todooGroup = getGroupByID(groupID);
-    	ArrayList<User> groupMembers = todooGroup.getGroupMembers();
+    	if (app.userIsNotInDB(loginName)) {
+    		app.close();
+    		em.close();
+    		throw new NoDBEntryException("User does not exist.");
+    	}
     	
-    	User userToRemove = app.getUserByLoginName(user.getLoginName());
-    	groupMembers.remove(userToRemove);
+    	TudooGroup group = getGroupByID(groupID);
+    	ArrayList<String> members = group.getGroupMembers();
+    	members.remove(loginName);
     	
-    	//create update
-    	CriteriaBuilder cb = em.getCriteriaBuilder();
-    	CriteriaUpdate<TudooGroup> update = cb.createCriteriaUpdate(TudooGroup.class);
+    	group.setGroupMembers(members);
     	
-    	//set the root class
-    	Root<TudooGroup> g = update.from(TudooGroup.class);
-    	
-    	//set the update and where clause
-    	update.set("groupMembers", groupMembers);
-    	Predicate sameGroupUUID = cb.equal(g.get("groupName"), "group name");
-    	update.where(sameGroupUUID);
-    	
-    	//update group members
-    	EntityTransaction tx = em.getTransaction();
-    	tx.begin();
-    	//em.createQuery(update).executeUpdate();
-    	todooGroup.setGroupMembers(groupMembers);
-    	tx.commit();
+    	em.getTransaction().begin();
+    	em.merge(group);
+    	em.getTransaction().commit();
+    	em.close();
     }
 	
 	/**
