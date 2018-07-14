@@ -18,7 +18,7 @@ public class TudooGroup {
 	private String groupName;
 	@OneToOne
 	private User groupOwner;
-	private ArrayList<User> groupMembers;
+	private ArrayList<String> groupMembers;
 	
 	
 	public String getGroupUUID() {
@@ -30,7 +30,7 @@ public class TudooGroup {
 	public User getGroupOwner() {
 		return groupOwner;
 	}
-	public ArrayList<User> getGroupMembers() {
+	public ArrayList<String> getGroupMembers() {
 		return groupMembers;
 	}
 	
@@ -43,7 +43,7 @@ public class TudooGroup {
 	public void setGroupOwner(User groupOwner) {
 		this.groupOwner = groupOwner;
 	}
-	public void setGroupMembers(ArrayList<User> arrayList) {
+	public void setGroupMembers(ArrayList<String> arrayList) {
 		this.groupMembers = arrayList;
 	}
 }
