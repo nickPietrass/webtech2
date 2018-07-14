@@ -144,8 +144,24 @@ public class TudooApp {
     	em.close();
 	}
 	
-	public void changeUserOrGroupPermissionToVisibleByOnly(UUID todooID, String loginName) {
-		//TODO
+	public void changeUserOrGroupPermissionToVisibleByOnly(String tudooID, String id) throws NoDBEntryException {
+		EntityManager em = emf.createEntityManager();
+    	
+    	if (tudooDoesNotExist(tudooID)) {
+    		em.close();
+    		throw new NoDBEntryException("Tudoo does not exist.");
+    	}
+    	
+    	Tudoo tudoo = getTudooByID(tudooID);
+    	ArrayList<String> newEditableBy = tudoo.getEditableBy();
+    	newEditableBy.remove(id);
+    	
+    	tudoo.setEditableBy(newEditableBy);
+    	
+    	em.getTransaction().begin();
+    	em.merge(tudoo);
+    	em.getTransaction().commit();
+    	em.close();	
 	}
 	
 	public void deleteUserOrGroupFromTodoo(UUID todooID, String loginName) {
