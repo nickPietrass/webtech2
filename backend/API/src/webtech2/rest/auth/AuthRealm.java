@@ -4,9 +4,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.SaltedAuthenticationInfo;
-import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.config.IniSecurityManagerFactory;
@@ -22,11 +20,12 @@ import org.apache.shiro.util.Factory;
 import webtech2.jpa.App;
 import webtech2.jpa.entities.User;
 import webtech2.jpa.exceptions.NoDBEntryException;
-
+@SuppressWarnings("deprecation")
 public class AuthRealm extends JdbcRealm {
 	public static AuthRealm instance;
 	private static Factory<SecurityManager> factory;
 
+	
 	public AuthRealm() {
 		factory = new IniSecurityManagerFactory();
 		org.apache.shiro.mgt.SecurityManager securityManager = factory.getInstance();
@@ -55,13 +54,6 @@ public class AuthRealm extends JdbcRealm {
 		} else {
 			return null;
 		}
-	}
-
-	public Subject getCurrentSubject() {
-		if (factory == null) {
-			System.out.println("AuthRealm not created");
-		}
-		return SecurityUtils.getSubject();
 	}
 
 	public void loginUser(String loginName, String password) throws AuthenticationException, InvalidSessionException, NoDBEntryException {
@@ -100,5 +92,12 @@ public class AuthRealm extends JdbcRealm {
 		SaltedAuthenticationInfo info = new MySaltedAuthentificationInfo(loginName, user.getPassword(), user.getSalt());
 
 		return info;
+	}
+	
+	private Subject getCurrentSubject() {
+		if (factory == null) {
+			System.out.println("AuthRealm not created");
+		}
+		return SecurityUtils.getSubject();
 	}
 }
