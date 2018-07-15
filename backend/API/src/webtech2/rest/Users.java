@@ -13,17 +13,11 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
-
 import webtech2.jpa.entities.User;
 import webtech2.jpa.exceptions.DuplicateDBEntryException;
 import webtech2.jpa.exceptions.NoDBEntryException;
 import webtech2.rest.auth.AuthRealm;
-import webtech2.rest.exceptions.UserNotResolvedException;
+import webtech2.rest.auth.PasswordSaltMixture;
 import webtech2.rest.temporary.SerializableUser;
 import webtech2.rest.temporary.SerializableUserID;
 import webtech2.rest.temporary.params.NewUser;
@@ -33,96 +27,90 @@ import webtech2.rest.temporary.params.NewUser;
  */
 @ApplicationPath("/api")
 @Path("/users")
-public class Users extends Application{
-	
-    @GET
-    @Path("/get")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getUser(@QueryParam("id") String userID){
-    	try {
+public class Users extends Application {
+
+	@GET
+	@Path("/get")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getUser(@QueryParam("id") String userID) {
+		try {
 			User tempUser = JPAConnector.getAppConnection().getUserByLoginName(userID);
-			return Response.ok(
-					new SerializableUser(
-						tempUser.getLoginName(),
-						"***",
-						tempUser.getDisplayName(),
-						tempUser.getCreationDate())
-					).build();
+			return Response.ok(new SerializableUser(tempUser.getLoginName(), "***", tempUser.getDisplayName(),
+					tempUser.getCreationDate())).build();
 		} catch (NoDBEntryException e) {
 			return Response.status(400).build();
 		}
-    }
+	}
 
-    @POST
-    @Path("/register")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response registerUser(NewUser idObject){ 
-    	try {
-			JPAConnector.getAppConnection().registerNewUser(idObject.getLoginName(), idObject.getPassword(), idObject.getDisplayName());
-			return Response.ok("myCoolSessionID").build(); //TODO Shiro stuff
+	@POST
+	@Path("/register")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response registerUser(NewUser idObject) {
+		try {
+			PasswordSaltMixture tempPW = AuthRealm.instance.generatePassword(idObject.getPassword());
+			JPAConnector.getAppConnection().registerNewUser(idObject.getLoginName(), tempPW.getPassword(),
+					idObject.getDisplayName(), tempPW.getSalt());
+			return Response.ok().build(); // TODO Shiro stuff
 		} catch (DuplicateDBEntryException e) {
 			return Response.status(400).build();
 		}
-    }
-    
-    @POST
-    @Path("/login")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response loginUser(SerializableUserID idObject){ //TODO Shiro stuff, also if user already logged in, give him new sessionID
-    	Subject currentUser = AuthRealm.getCurrentSubject();
-    	try {
+	}
+
+	@POST
+	@Path("/login")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response loginUser(SerializableUserID idObject) { // TODO Shiro stuff, also if user already logged in, give
+																// him new sessionID
+		try {
 			AuthRealm.loginUser(idObject.getLoginName(), idObject.getPassword());
 		} catch (Exception e) {
 			return Response.status(400).build();
 		}
-    	return Response.ok().build();
-    }
-    
-    @PUT
-    @Path("/editDisplayName")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response editDisplayName(@HeaderParam("sessionID") String sessionID, String newName){
-    	try {
-        	//Get user if possible
-    		SerializableUser tempUser = AuthRealm.resolveUser(sessionID);
-    		
-			JPAConnector.getAppConnection().changeUserDisplayName("GET LOGINNAME FROM SHIRO", newName); //TODO Shiro
-			return Response.ok().build(); //if it was changed
-		} catch (NoDBEntryException | UserNotResolvedException e) {
-			System.out.println("Error in editPassword: "+e.getClass().getSimpleName());
-			return Response.status(400).build(); //if changeObject.sessionID bad
+		return Response.ok().build();
+	}
+
+	@PUT
+	@Path("/editDisplayName")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response editDisplayName(String newName) {
+		try {
+			// Get user if possible
+			User tempUser = AuthRealm.instance.getCurrentUser();
+			JPAConnector.getAppConnection().changeUserDisplayName(tempUser.getLoginName(), newName);
+			return Response.ok().build();
+		} catch (NoDBEntryException e) {
+			System.out.println("Error in editDisplayName: " + e.getClass().getSimpleName());
+			return Response.status(400).build();
 		}
-    }
-    
-    @PUT
-    @Path("/editPassword")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response editPassword(@HeaderParam("sessionID") String sessionID, String newPassword){
-    	try {
-        	//Get user if possible
-    		SerializableUser tempUser = AuthRealm.resolveUser(sessionID);
-    		
-			JPAConnector.getAppConnection().changeUserPassword("GET LOGINNAME FROM SHIRO", newPassword); //TODO Shiro
-			return Response.ok().build(); //if it was changed
-		} catch (NoDBEntryException | UserNotResolvedException e) {
-			System.out.println("Error in editPassword: "+e.getClass().getSimpleName());
-			return Response.status(400).build(); //if changeObject.sessionID bad
+	}
+
+	@PUT
+	@Path("/editPassword")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response editPassword(@HeaderParam("sessionID") String sessionID, String newPassword) {
+		try {
+			// Get user if possible
+			User tempUser = AuthRealm.instance.getCurrentUser();
+			JPAConnector.getAppConnection().changeUserPassword(tempUser.getLoginName(), newPassword);
+			return Response.ok().build();
+		} catch (NoDBEntryException e) {
+			System.out.println("Error in editPassword: " + e.getClass().getSimpleName());
+			return Response.status(400).build();
 		}
-    }
-    
-    @DELETE
-    @Path("/remove")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response removeUser(@HeaderParam("sessionID") String sessionID){
-    	try {
-    		//Get user if possible
-    		SerializableUser tempUser = AuthRealm.resolveUser(sessionID);
-    		
-			JPAConnector.getAppConnection().deleteUser("SHIRO GIVE ME LOGIN NAME");
-			return Response.ok().build(); //if user was removed
-		} catch (NoDBEntryException | UserNotResolvedException e) {
-			System.out.println("Error in editPassword: "+e.getClass().getSimpleName());
-			return Response.status(400).build(); //if changeObject.sessionID bad
+	}
+
+	@DELETE
+	@Path("/remove")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeUser(@HeaderParam("sessionID") String sessionID) {
+		try {
+			// Get user if possible
+			User tempUser = AuthRealm.instance.getCurrentUser();
+			JPAConnector.getAppConnection().deleteUser(tempUser.getLoginName());
+			return Response.ok().build();
+		} catch (NoDBEntryException e) {
+			System.out.println("Error in remove: " + e.getClass().getSimpleName());
+			return Response.status(400).build();
 		}
-    }
+	}
 }
