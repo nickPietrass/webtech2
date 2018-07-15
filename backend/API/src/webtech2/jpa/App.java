@@ -172,7 +172,7 @@ public class App {
     	update.where(loginNameMatches);
     	
     	//change displayName
-    	EntityTransaction tx = em.getTransaction();
+    	tx = em.getTransaction();
     	tx.begin();
     	em.createQuery(update).executeUpdate();
     	tx.commit();
