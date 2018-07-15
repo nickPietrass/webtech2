@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-todonew',
@@ -6,15 +7,26 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./todonew.component.css']
 })
 export class TodonewComponent implements OnInit {
-  //TODO actual return type
-  @Output() submit = new EventEmitter<string>();
-  constructor() { }
+  @Output() submit = new EventEmitter<object>();
+
+  todoName = "";
+  todoContent = "";
+
+  constructor(private api : ApiService) { }
 
   ngOnInit() {
   }
 
-  submitNew(){
+  submitNew(name, content){
     //TODO API call
-    this.submit.emit("");
+    console.log(this.todoName);
+    console.log(this.todoContent);
+    let newTodo = {
+      id: this.api.getNewId(),
+      name: name,
+      content: content,
+      editableBy: ["dude", "dude2"]
+    }
+    this.submit.emit(newTodo);
   }
 }

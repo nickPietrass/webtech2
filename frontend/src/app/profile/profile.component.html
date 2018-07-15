@@ -1,13 +1,26 @@
-<div class="col-md-6">
-  <h3> Profile of {{user.name}}</h3>
-  <div>
-    <h4>Change Profile data</h4>
-    <a>New name</a>
-    <input type="text" />
-    <input type="submit">
-    <br>
-    <a>New password</a>
-    <input type="text" />
-    <input type="submit">
+<div class="col-md-6" *ngIf="this.api.currentUser">
+
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title">Profile of {{this.api.currentUser.displayName}}</h3>
+      <div class="list-group list-group-flush">
+        <li class="list-group-item">
+          <a>New name:</a>
+          <input type="text" />
+          <input type="submit">
+        </li>
+
+        <li class="list-group-item">
+          <a>New password:</a>
+          <input type="text" />
+          <input type="submit">
+        </li>
+      </div>
+    </div>
   </div>
+</div>
+
+
+<div *ngIf="!this.api.currentUser">
+  <p>Not logged in.</p>
 </div>

@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 import { AppComponent } from './app.component';
@@ -13,6 +14,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { GrouplistComponent } from './grouplist/grouplist.component';
 import { CreditsComponent } from './credits/credits.component';
 import { TodonewComponent } from './todonew/todonew.component';
+import { ApiService } from './api.service';
+import { HttpClient, HttpHeaders, HttpClientModule } from '../../node_modules/@angular/common/http';
 
 
 @NgModule({
@@ -30,9 +33,11 @@ import { TodonewComponent } from './todonew/todonew.component';
     TodonewComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule,
+    FormsModule
   ],
-  providers: [],
+  providers: [ ApiService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

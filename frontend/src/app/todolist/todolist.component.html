@@ -1,15 +1,14 @@
-<div class="col-md-9">
- <h2>All todos</h2>
- <div>
-  <h3>Filters go here</h3>
- </div>
+<div class="col-md-12" *ngIf="this.api.currentUser">
 
- <button (click)="new = true">Create New</button>
- 
- <app-todonew *ngIf="new" (submit)="onNewSubmit()"></app-todonew>
+ <button id="newBtn" (click)="new = true" class="btn btn-primary">Create New</button>
+
+ <app-todonew *ngIf="new" (submit)="onNewSubmit($event)"></app-todonew>
  <ul class="card-columns">
   <div *ngFor="let todo of todos">
-   <app-todopreview id="todo.id" name="todo.name"></app-todopreview>
+   <app-todopreview [id]="todo.id"></app-todopreview>
   </div>
  </ul>
+</div>
+<div *ngIf="!this.api.currentUser">
+  <p>Not logged in.</p>
 </div>

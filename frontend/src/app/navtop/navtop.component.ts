@@ -1,4 +1,5 @@
 import { Component, OnInit, Output } from '@angular/core';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-navtop',
@@ -10,15 +11,13 @@ export class NavtopComponent implements OnInit {
   loginName = "";
   loginPw = "";
 
-  constructor() { }
-  loggedIn = false;
+  constructor(private api: ApiService) { }
 
   ngOnInit() {
   }
 
-  onLoginClick(){
-    //TODO replace with actual check
-    this.loggedIn = !this.loggedIn;
+  login(name, pw) {
+    this.api.sendLoginRequest(name, pw, () => { });
 
   }
 

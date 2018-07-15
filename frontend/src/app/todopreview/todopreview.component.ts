@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-todopreview',
@@ -7,17 +8,17 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class TodopreviewComponent implements OnInit {
   @Input() id : string;
-  @Input() name : string;
-  todo;
   viewMode: string;
-  constructor() {
-    this.viewMode = "minimized";
-    //dummy data
-    //TODO actually load data by id
-    this.todo = { name: "testname", content: "Lorem Ipsum is simply dummy text of  asdasdasasd" };
+  todo;
+  constructor(private api : ApiService) {
   }
 
   ngOnInit() {
+    //initialize in minimized view
+    this.viewMode = "minimized";
+    //load the todo from cache
+    this.todo = this.api.getTodoById(this.id);
+    this.todo = this.api.getTodoById(this.id);
   }
   onEdit() {
     this.viewMode = "maximized";

@@ -1,3 +1,7 @@
-<p>
-  grouplist works!
-</p>
+<div class="col-md-12" *ngIf="this.api.currentUser">
+
+  groups
+</div>
+<div *ngIf="!this.api.currentUser">
+  <p>Not logged in.</p>
+</div>

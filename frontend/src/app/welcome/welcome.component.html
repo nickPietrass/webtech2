@@ -1,15 +1,15 @@
-<div class="col-md-4">
+<div class="col-md-4" *ngIf="!this.api.currentUser">
  <div class="card">
   <div class="card-body">
    <h3 class="card-title">Login</h3>
    <div class="list-group list-group-flush">
     <li class="list-group-item">
      <a>Username:</a>
-     <input type="text" #loginName/>
+     <input type="text" #loginName [(ngModel)]="loginNameVal"/>
     </li>
     <li class="list-group-item">
       <a>Password: </a>
-     <input type="password" #loginPass/>
+     <input type="password" #loginPass  [(ngModel)]="loginPassVal"/>
     </li>
    </div>
    <button (click)="login(loginName.value, loginPass.value)" class ="btn btn-primary">Login</button>
@@ -17,22 +17,24 @@
   </div>
  </div>
 </div>
-<div class="col-md-4">
+<div class="col-md-4" *ngIf="!this.api.currentUser">
   <div class="card">
     <div class="card-body">
      <h3 class="card-title">Register a new account</h3>
      <div class="list-group list-group-flush">
       <li class="list-group-item">
        <a>Username:</a>
-       <input type="text" #loginName/>
+       <input type="text" #registerName [(ngModel)]="registerNameVal"/>
       </li>
       <li class="list-group-item">
         <a>Password: </a>
-       <input type="password" #loginPass/>
+       <input type="password" #registerPass  [(ngModel)]="registerPassVal"/>
       </li>
      </div>
-     <button (click)="login(loginName.value, loginPass.value)" class = "btn btn-primary">Register</button>
-  
+     <button (click)="register(registerName.value, registerPass.value)" class = "btn btn-primary">Register</button>
     </div>
    </div>
+</div>
+<div class="col-md-4" *ngIf="this.api.currentUser">
+  Hello {{this.api.currentUser.displayName}}, you are already logged in.
 </div>
