@@ -6,13 +6,20 @@
       http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 
     <persistence-unit name="tudoo-persistence-unit">
+    	<class>webtech2.jpa.entities.RolesPermission</class>
+    	<class>webtech2.jpa.entities.Tudoo</class>
+    	<class>webtech2.jpa.entities.TudooGroup</class>
+    	<class>webtech2.jpa.entities.User</class>
+    	<class>webtech2.jpa.entities.UserRole</class>
+    	
         <properties>
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/testDB?serverTimezone=UTC"/>
             <property name="javax.persistence.jdbc.user" value="root"/>
-            <property name="javax.persistence.jdbc.password" value="1234"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
+			<property name="javax.persistence.schema-generation.database.action" value="create"/>
 
-            <property name="hibernate.archive.autodetection" value="class, hbm"/>
+           	<property name="hibernate.archive.autodetection" value="class, hbm"/>
 			<property name="hibernate.hbm2ddl.auto" value="validate" />
     		<property name="hibernate.show_sql" value="true" />
 
@@ -20,5 +27,6 @@
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.use_sql_comments" value="true"/>
         </properties>
+        
     </persistence-unit>
 </persistence>
