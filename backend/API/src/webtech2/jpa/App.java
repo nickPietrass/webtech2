@@ -31,6 +31,8 @@ public class App {
 	private EntityManagerFactory emf;
 	private GroupApp groupApp;
 	private TudooApp tudooApp;
+	private PermissionApp permissionApp;
+	private UserRoleApp userRoleApp;
 	
 	public static App instance;
 	
@@ -41,6 +43,8 @@ public class App {
 		this.emf = Persistence.createEntityManagerFactory("tudoo-persistence-unit");
 		this.groupApp = new GroupApp(emf);
 		this.tudooApp = new TudooApp(emf);
+		this.permissionApp = new PermissionApp(emf);
+		this.userRoleApp = new UserRoleApp(emf);
 		instance = this;
 	}
 	
