@@ -94,7 +94,7 @@ public class TudooApp {
 		return result;
 	}
 	
-	public void changeTudooContent(UUID tudooID, String newTitle, String newContent) {
+	public void changeTudooContent(String tudooID, String newTitle, String newContent) {
 		//create EntityManager
 			EntityManager em = emf.createEntityManager();
 			
