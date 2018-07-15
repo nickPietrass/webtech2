@@ -57,14 +57,14 @@ public class AuthRealm extends JdbcRealm {
 		}
 	}
 
-	public static Subject getCurrentSubject() {
+	public Subject getCurrentSubject() {
 		if (factory == null) {
 			System.out.println("AuthRealm not created");
 		}
 		return SecurityUtils.getSubject();
 	}
 
-	public static void loginUser(String loginName, String password) throws AuthenticationException, InvalidSessionException, NoDBEntryException {
+	public void loginUser(String loginName, String password) throws AuthenticationException, InvalidSessionException, NoDBEntryException {
 		Subject currentUser = getCurrentSubject();
 
 		if (!currentUser.isAuthenticated()) {

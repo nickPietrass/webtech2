@@ -40,7 +40,7 @@ public class Echo extends Application{
 	@GET
     @Path("/shiro")
     public Response shiroPong(){
-		Subject currentUser = AuthRealm.getCurrentSubject();
+		Subject currentUser = AuthRealm.instance.getCurrentSubject();
 		
 
 		// let's login the current user so we can check against roles and permissions:

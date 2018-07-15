@@ -75,7 +75,7 @@ public class Tudoos extends Application{
     @DELETE
     @Path("/remove")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removeUser(@HeaderParam("sessionID") String sessionID, String tudooUUID){
+    public Response removeTudoo(@HeaderParam("sessionID") String sessionID, String tudooUUID){
         return Response.status(400).build();
     }
 }
