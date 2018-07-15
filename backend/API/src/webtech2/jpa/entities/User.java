@@ -11,6 +11,7 @@ public class User {
 	private String password;
 	private String displayName;
 	private String created;
+	private String salt;
 	
 	
 	public String getLoginName() {
@@ -25,6 +26,9 @@ public class User {
 	public String getCreationDate() {
 		return created;
 	}
+	public String getSalt() {
+		return salt;
+	}
 	
 	public void setLoginName(String loginName) {
 		this.loginName = loginName;
@@ -37,5 +41,8 @@ public class User {
 	}
 	public void setCreationDate(String created) {
 		this.created = created;
+	}
+	public void setSalt(String salt) {
+		this.salt = salt;
 	}
 }
