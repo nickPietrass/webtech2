@@ -144,7 +144,7 @@ public class App {
 	 * @param newPassword new password of the user.
 	 * @throws NoDBEntryException if the user does not exist.
 	 */
-	public void changeUserPassword(String loginName, String newPassword) throws NoDBEntryException {
+	public void changeUserPassword(String loginName, String newPassword, String newSalt) throws NoDBEntryException {
 		if (userIsNotInDB(loginName)) {
 			throw new NoDBEntryException("Error changing password. The given user does not exist.");
 		}
@@ -167,6 +167,17 @@ public class App {
     	tx.begin();
     	em.createQuery(update).executeUpdate();
     	tx.commit();
+    	
+    	update.set("salt", newSalt);
+    	update.where(loginNameMatches);
+    	
+    	//change displayName
+    	EntityTransaction tx = em.getTransaction();
+    	tx.begin();
+    	em.createQuery(update).executeUpdate();
+    	tx.commit();
+
+    	
     	em.close();
 	}
 	
