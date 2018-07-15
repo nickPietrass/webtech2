@@ -77,7 +77,7 @@ public class App {
 	 * @param password password of the user
 	 * @param displayName display name of the user
 	 */
-	public void registerNewUser(String loginName, String password, String displayName) throws DuplicateDBEntryException {
+	public void registerNewUser(String loginName, String password, String displayName, String salt) throws DuplicateDBEntryException {
 		if (loginNameIsAlreadyTaken(loginName)) {
 			throw new DuplicateDBEntryException("Login name already taken");
 		}
@@ -91,6 +91,7 @@ public class App {
 		user.setPassword(password);
 		user.setDisplayName(displayName);
 		user.setCreationDate(created);
+		user.setSalt(salt);
 		
 		persist(user);
 	}
