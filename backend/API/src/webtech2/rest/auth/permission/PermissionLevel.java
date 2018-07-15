@@ -6,7 +6,17 @@ package webtech2.rest.auth.permission;
  * @author Ilja
  */
 public enum PermissionLevel {
-	NONE,
-	VIEW,
-	EDIT;
+	NONE(0),
+	VIEW(1),
+	EDIT(2);
+	
+	private int value;
+	
+	private PermissionLevel(int value) {
+		this.value = value;
+	}
+	
+	public int getValue() {
+		return value;
+	}
 }

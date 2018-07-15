@@ -33,7 +33,7 @@ public class Groups extends Application{
     public Response getGroup(@QueryParam("id") String groupID){
         try {
 			TudooGroup tempGroup = JPAConnector.getGroupAppConnection().getGroupByID(groupID);
-    		if(!tempGroup.getGroupOwner().equals(AuthRealm.instance.getCurrentUser()) 
+    		if(!tempGroup.getGroupOwner().getLoginName().equals(AuthRealm.instance.getCurrentUser().getLoginName()) 
     				&& tempGroup.getGroupMembers().contains(AuthRealm.instance.getCurrentUser().getLoginName())) {
     			return Response.status(400).build();
     		}
