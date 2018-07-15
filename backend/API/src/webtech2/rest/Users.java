@@ -3,7 +3,6 @@ package webtech2.rest;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -60,7 +59,8 @@ public class Users extends Application {
 				.registerNewUser(
 					idObject.getLoginName(), 
 					tempPW.getPassword(),
-					idObject.getDisplayName(), tempPW.getSalt()
+					idObject.getDisplayName(), 
+					tempPW.getSalt()
 				);
 			return Response.ok().build(); // TODO Shiro stuff
 		} catch (DuplicateDBEntryException e) {
@@ -71,14 +71,14 @@ public class Users extends Application {
 	@POST
 	@Path("/login")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response loginUser(SerializableUserID idObject) { // TODO Shiro stuff, also if user already logged in, give
-																// him new sessionID
+	public Response loginUser(SerializableUserID idObject) { 
 		try {
 			AuthRealm.loginUser(
 					idObject.getLoginName(), 
 					idObject.getPassword()
 					);
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return Response.status(400).build();
 		}
 		return Response.ok().build();
@@ -102,11 +102,12 @@ public class Users extends Application {
 	@PUT
 	@Path("/editPassword")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response editPassword(@HeaderParam("sessionID") String sessionID, String newPassword) {
+	public Response editPassword(String newPassword) {
 		try {
 			// Get user if possible
 			User tempUser = AuthRealm.instance.getCurrentUser();
-			JPAConnector.getAppConnection().changeUserPassword(tempUser.getLoginName(), newPassword);
+			PasswordSaltMixture tempPW = AuthRealm.instance.generatePassword(newPassword);
+			JPAConnector.getAppConnection().changeUserPassword(tempUser.getLoginName(), tempPW.getPassword(), tempPW.getSalt());
 			return Response.ok().build();
 		} catch (NoDBEntryException e) {
 			System.out.println("Error in editPassword: " + e.getClass().getSimpleName());
@@ -117,14 +118,15 @@ public class Users extends Application {
 	@DELETE
 	@Path("/remove")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeUser(@HeaderParam("sessionID") String sessionID) {
+	public Response removeUser() {
 		try {
 			// Get user if possible
 			User tempUser = AuthRealm.instance.getCurrentUser();
 			JPAConnector.getAppConnection().deleteUser(tempUser.getLoginName());
 			return Response.ok().build();
-		} catch (NoDBEntryException e) {
+		} catch (Exception e) {
 			System.out.println("Error in remove: " + e.getClass().getSimpleName());
+			e.printStackTrace();
 			return Response.status(400).build();
 		}
 	}

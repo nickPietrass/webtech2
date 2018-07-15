@@ -15,6 +15,7 @@ import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
+import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 
@@ -49,6 +50,7 @@ public class AuthRealm extends JdbcRealm {
 
 		if (currentUser.isAuthenticated()) {
 			User user = (User) currentUser.getSession().getAttribute("actualUser");
+			System.out.println("Currently serving: "+user.getLoginName());
 			return user;
 		} else {
 			return null;
@@ -62,22 +64,16 @@ public class AuthRealm extends JdbcRealm {
 		return SecurityUtils.getSubject();
 	}
 
-	public static void registerUser(String username, String password) {
-		// Write into shiro.ini
-	}
-
-	public static void loginUser(String loginName, String password) throws Exception {
+	public static void loginUser(String loginName, String password) throws AuthenticationException, InvalidSessionException, NoDBEntryException {
 		Subject currentUser = getCurrentSubject();
 
 		if (!currentUser.isAuthenticated()) {
 			UsernamePasswordToken token = new UsernamePasswordToken(loginName, password);
 			token.setRememberMe(true);
-			try {
-				currentUser.login(token);
-				currentUser.getSession().setAttribute("actualUser", App.instance.getUserByLoginName(loginName));
-			} catch (AuthenticationException ae) {
-				System.out.println("ERROR: " + ae.getMessage());
-			}
+			currentUser.login(token);
+			System.out.println("Login of new user successful!");
+			currentUser.getSession().setAttribute("actualUser", App.instance.getUserByLoginName(loginName));
+			System.out.println("Attached JPA user to new user!");
 		}
 	}
 
