@@ -1,18 +1,18 @@
 package webtech2.rest.temporary.params;
 
 /**
- * Temporary storage for HTTP body data of a request where a user should be kicked from a group.
+ * Temporary storage for HTTP body data of a request where a user should be kicked/added from/to a group.
  * @author Ilja
  */
-public class GroupKick {
+public class GroupMoveAction {
 	private String groupID,loginName;
 	
 	/**
 	 * Empty constructor for Jax-RS.
 	 */
-	public GroupKick() {}
+	public GroupMoveAction() {}
 
-	public GroupKick(String groupID, String loginName) {
+	public GroupMoveAction(String groupID, String loginName) {
 		this.groupID = groupID;
 		this.loginName = loginName;
 	}
