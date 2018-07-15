@@ -34,9 +34,16 @@ public class Users extends Application {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getUser(@QueryParam("id") String userID) {
 		try {
-			User tempUser = JPAConnector.getAppConnection().getUserByLoginName(userID);
-			return Response.ok(new SerializableUser(tempUser.getLoginName(), "***", tempUser.getDisplayName(),
-					tempUser.getCreationDate())).build();
+			User tempUser = JPAConnector
+					.getAppConnection()
+					.getUserByLoginName(userID);
+			return Response.ok(
+					new SerializableUser(
+							tempUser.getLoginName(), 
+							"***", 
+							tempUser.getDisplayName(),
+							tempUser.getCreationDate())
+					).build();
 		} catch (NoDBEntryException e) {
 			return Response.status(400).build();
 		}
@@ -48,8 +55,13 @@ public class Users extends Application {
 	public Response registerUser(NewUser idObject) {
 		try {
 			PasswordSaltMixture tempPW = AuthRealm.instance.generatePassword(idObject.getPassword());
-			JPAConnector.getAppConnection().registerNewUser(idObject.getLoginName(), tempPW.getPassword(),
-					idObject.getDisplayName(), tempPW.getSalt());
+			JPAConnector
+				.getAppConnection()
+				.registerNewUser(
+					idObject.getLoginName(), 
+					tempPW.getPassword(),
+					idObject.getDisplayName(), tempPW.getSalt()
+				);
 			return Response.ok().build(); // TODO Shiro stuff
 		} catch (DuplicateDBEntryException e) {
 			return Response.status(400).build();
@@ -62,7 +74,10 @@ public class Users extends Application {
 	public Response loginUser(SerializableUserID idObject) { // TODO Shiro stuff, also if user already logged in, give
 																// him new sessionID
 		try {
-			AuthRealm.loginUser(idObject.getLoginName(), idObject.getPassword());
+			AuthRealm.loginUser(
+					idObject.getLoginName(), 
+					idObject.getPassword()
+					);
 		} catch (Exception e) {
 			return Response.status(400).build();
 		}

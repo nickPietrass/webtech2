@@ -30,6 +30,7 @@ public class AuthRealm extends JdbcRealm {
 		factory = new IniSecurityManagerFactory();
 		org.apache.shiro.mgt.SecurityManager securityManager = factory.getInstance();
 		SecurityUtils.setSecurityManager(securityManager);
+		new App();
 		instance = this;
 	}
 

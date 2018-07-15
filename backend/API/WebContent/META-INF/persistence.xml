@@ -7,12 +7,14 @@
 
     <persistence-unit name="tudoo-persistence-unit">
         <properties>
-			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/testDB?serverTimezone=UTC"/>
             <property name="javax.persistence.jdbc.user" value="root"/>
-            <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="javax.persistence.jdbc.password" value="1234"/>
 
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.archive.autodetection" value="class, hbm"/>
+			<property name="hibernate.hbm2ddl.auto" value="validate" />
+    		<property name="hibernate.show_sql" value="true" />
 
             <!-- Configure SQL logging -->
             <property name="hibernate.format_sql" value="true"/>

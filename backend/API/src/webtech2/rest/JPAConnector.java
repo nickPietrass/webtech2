@@ -11,8 +11,9 @@ public class JPAConnector {
 	private static TudooApp tudooAppConnection;
 	
 	public static App getAppConnection() {
-		if(appConnection==null)
+		if(appConnection==null) {
 			appConnection = App.instance;
+		}
 		return appConnection;
 	}
 	
