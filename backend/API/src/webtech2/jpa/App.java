@@ -215,12 +215,11 @@ public class App {
 	 * @throws NoDBEntryException if the user does not exist.
 	 */
 	public void deleteUser(String loginName) throws NoDBEntryException {
-		EntityManager em = emf.createEntityManager();
-		
 		if (userIsNotInDB(loginName)) {
-			em.close();
 			throw new NoDBEntryException("Error deleting user. User does not exist.");
 		}
+		
+		EntityManager em = emf.createEntityManager();
 		
 		User user = getUserByLoginName(loginName);
 		ArrayList<Tudoo> visibleTudoos = tudooApp.getAllVisibleTudoosOfUser(loginName);
@@ -289,8 +288,9 @@ public class App {
 		cq.select(user).where(cb.equal(user.get("loginName"), loginName));
 		
 		TypedQuery<User> query = em.createQuery(cq);
+		ArrayList<User> result = new ArrayList<User> (query.getResultList());
 		em.close();
-		return query.getResultList().size() == 0;
+		return result.size() == 0;
 	}
 	
 	/**
