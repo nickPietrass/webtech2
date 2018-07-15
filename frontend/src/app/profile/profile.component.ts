@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-profile',
@@ -7,16 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProfileComponent implements OnInit {
 
-  constructor() { }
+  constructor(private api: ApiService) { }
+  user;
 
-  user = {
-    name : "testname",
-    accountName : "testaccountname",
-    groups : ["g1", "g2", "g3"],
-    todos: ["t1", "t2", "t3"]
-  }
   ngOnInit() {
     //TODO API call to replace dummy data
+    
   }
 
   onChangeName() {

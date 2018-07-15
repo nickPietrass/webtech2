@@ -1,4 +1,21 @@
 .card-columns{
  
- column-count: 6;
+ column-count: 8;
+}
+
+ul {
+ margin-top: 2em;
+}
+
+#newBtn {
+ margin-bottom: 2em;
+}
+
+textarea {
+ width:1000em;
+ height: 20em;
+}
+.card {
+ min-width: 10%;
+ width: 10%;
 }

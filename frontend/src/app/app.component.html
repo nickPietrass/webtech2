@@ -3,7 +3,6 @@
     <app-navbar (pageChange)='onPageChange($event)'></app-navbar>
     <main class="col-md-8">
         <div [ngSwitch]="currentPage" class="no-float">
-            <!--<app-todopreview *ngSwitchCase="'home'"></app-todopreview>-->
             <app-welcome *ngSwitchCase="'login'" (loggedIn)='onLogin()'></app-welcome>
             <app-profile *ngSwitchCase="'profile'"></app-profile>
             <app-todolist *ngSwitchCase="'todos'"></app-todolist>

@@ -1,13 +1,32 @@
-<div>
-  <h4>New TuDoo</h4>
-  <a>Title:</a><input type="text"/>
-  <input type="textarea"/>
-  <a>Group:</a>
-  <!-- TODO actually use users groups here-->
-  <select>
-    <option value="g1">g1</option>
-    <option value="none">none</option>
-  </select>
-  <h4>Visible by + editable by dropdowns + selection here</h4>
-  <button (click)="submitNew()">Submit</button>
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">New TuDoo</h4>
+    <div class="list-group list-group-flush">
+      <li class="list-group-item">
+        <a>Title:</a>
+        <input type="text" #todoName [(ngModel)]="todoNameVal"/>
+      </li>
+
+      <li class="list-group-item">
+        <a>Content:</a>
+        <textarea #todoContent [(ngModel)]="todoContentVal"></textarea>
+      </li>
+    
+    <li class="list-group-item">
+    <a>Visible by:</a>
+    <select>
+      <option value="g1">g1</option>
+      <option value="none">none</option>
+    </select>
+  </li>
+  <li class="list-group-item">
+    <a>Editable by:</a>
+    <select>
+      <option value="g1">g1</option>
+      <option value="none">none</option>
+    </select>
+    </li>
+    <button (click)="submitNew(todoName.value, todoContent.value)" class ="btn btn-primary">Submit</button>
+  </div>
+  </div>
 </div>

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-todolist',
@@ -8,37 +9,23 @@ import { Component, OnInit } from '@angular/core';
 export class TodolistComponent implements OnInit {
   todos = [];
   new = false;
-  constructor() { }
+  constructor(private api : ApiService) { }
 
-  onNewSubmit(){
+  onNewSubmit(todo){
     //TODO reload list
     this.new = false;
+
+    //refresh todo list
+    console.log(todo)
+    this.api.addTodo(todo);
+    this.todos = this.api.getCachedTodos();
   }
   ngOnInit() {
     //TODO actually load the list
 
-    //test data
-    
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
-    this.todos.push({name: "testname", content: "testcontent", id : "124"});
+    //load All Todos from API
+    this.api.loadAllTodos();
+    this.todos = this.api.getCachedTodos();
   }
 
 }

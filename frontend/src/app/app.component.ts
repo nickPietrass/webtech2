@@ -16,7 +16,7 @@ export class AppComponent implements OnInit{
   }
   onLogin(credentials : object){
     this.isLoggedIn = true;
-    this.onPageChange("home");
+    this.onPageChange("todos");
   }
 
   onPageChange( newPage : string ){

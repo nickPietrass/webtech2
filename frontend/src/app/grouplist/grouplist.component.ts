@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-grouplist',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GrouplistComponent implements OnInit {
 
-  constructor() { }
+  constructor(private api: ApiService) { }
 
   ngOnInit() {
   }
