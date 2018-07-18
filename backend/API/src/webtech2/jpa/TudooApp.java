@@ -71,7 +71,7 @@ public class TudooApp {
 		return query.getSingleResult();
 	}
 	
-	public ArrayList<Tudoo> getAllVisibleTudoosOfUser(String loginName) {
+	public ArrayList<Tudoo> getAllVisibleTudoosOfUser(String loginName) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
 		
 		CriteriaBuilder cb = em.getCriteriaBuilder();
