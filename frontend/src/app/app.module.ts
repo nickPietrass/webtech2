@@ -16,6 +16,7 @@ import { CreditsComponent } from './credits/credits.component';
 import { TodonewComponent } from './todonew/todonew.component';
 import { ApiService } from './api.service';
 import { HttpClient, HttpHeaders, HttpClientModule } from '../../node_modules/@angular/common/http';
+import { NotifyComponent } from './notify/notify.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { HttpClient, HttpHeaders, HttpClientModule } from '../../node_modules/@a
     ProfileComponent,
     GrouplistComponent,
     CreditsComponent,
-    TodonewComponent
+    TodonewComponent,
+    NotifyComponent
   ],
   imports: [
     BrowserModule,

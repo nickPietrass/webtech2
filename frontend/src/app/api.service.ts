@@ -5,19 +5,20 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class ApiService {
   localToken = '';
   //set to test / live depending if actual data exists or not
-  mode = "test";
+  mode = "!test";
 
   // workaround for mockup UUISs
   currentID = 1;
   // caching variables
 
-  currentUser = {};
+  currentUser;
   cachedTodos = [];
 
   defaultHeaders = new HttpHeaders({
     'sessionID': this.localToken
   });
   constructor(private http: HttpClient) {
+
   }
 
   //mockup for UUID generation
@@ -54,10 +55,8 @@ export class ApiService {
       password: password
     };
 
-    // TODO save auth token
-
     console.log("logging in with: " + user + " " + password);
-    this.http.post(loginUrl, loginData, { observe : 'response'}).subscribe((resp) => {
+    this.http.post(loginUrl, loginData, { observe: 'response' }).subscribe((resp) => {
       console.log(resp);
       if (resp.status == 200) {
         loginUrl = 'api/users/get?id=' + user;
@@ -65,9 +64,9 @@ export class ApiService {
           console.log(data);
           this.currentUser = data.body;
           console.log(this.currentUser);
-          callback(data);
         });
       }
+      callback(resp.status);
     });
 
   }
@@ -75,7 +74,7 @@ export class ApiService {
   //register new user
   sendRegisterRequest = (user, password, displayname, callback) => {
     if (!user || !password) {
-      console.log('sendLoginRequest needs 2 params, got ' + user + ' ' + password);
+      console.log('sendRegisterRequest needs 2 params, got ' + user + ' ' + password);
       return;
     }
 
@@ -86,7 +85,7 @@ export class ApiService {
       displayName: displayname
     };
     // TODO save auth token
-    this.http.post(loginUrl, loginData).subscribe((data) => {
+    this.http.post(loginUrl, loginData, { observe: "response" }).subscribe((data) => {
       console.log(data);
       callback(data);
     });
@@ -94,10 +93,25 @@ export class ApiService {
 
   // loads user by Id
 
-  loadUser = (userId) => {
+  reloadCurrentUser = (callback) => {
+    let loginUrl = 'api/users/get?id=' + this.currentUser.loginName;
+    this.http.get(loginUrl, { observe: 'response' }).subscribe((data) => {
+      this.currentUser = data.body;
+      callback(data);
+    });
 
   }
 
+  changeDisplayname = (name, callback) => {
+    this.http.put("api/users/editDisplayName", name, { observe: "response" }).subscribe((data) => {
+      this.reloadCurrentUser(callback);
+    });
+  }
+  changePassword = (pw, callback) => {
+    this.http.put("api/users/editPassword", pw, { observe: "response" }).subscribe((data) => {
+      this.reloadCurrentUser(callback);
+    });
+  }
   // adds a todo
   addTodo = (todo) => {
     //TODO actual API call & reload
@@ -105,30 +119,12 @@ export class ApiService {
   }
 
   // load all Tudoos for user
-  loadAllTodos = () => {
-    // TODO keine params?
+  loadAllTodos = (callback) => {
+
     const getUrl = 'api/tudoos/userTudoos';
-
-    if (this.mode === "test") {
-      //inject testing objects
-      let testTodo1 = {
-        id: "123",
-        name: "test1",
-        content: "content1",
-        editableBy: ["dude", "dude2"]
-      }
-      let testTodo2 = {
-        id: "124",
-        name: "test2",
-        content: "content2",
-        editableBy: ["dude", "dude2"]
-      }
-      this.cachedTodos.push(testTodo1);
-      this.cachedTodos.push(testTodo2);
-
-    } else {
-      //TODO API call
-    }
+    this.http.get(getUrl, { observe: 'response' }).subscribe((data) => {
+      console.log(data)
+    });
   }
 
   //returns todo by id from cached todos

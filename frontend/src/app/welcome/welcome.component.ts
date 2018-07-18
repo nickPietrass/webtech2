@@ -1,4 +1,4 @@
-import { Component, OnInit , EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { ApiService } from '../api.service';
 
 @Component({
@@ -14,22 +14,45 @@ export class WelcomeComponent implements OnInit {
 
   registerName;
   registerPw;
-  constructor(private api : ApiService) { }
+
+  notifyType;
+  notifyContent;
+
+  alert = false;
+
+  constructor(private api: ApiService) { }
 
   ngOnInit() {
   }
-  
-  login(loginName, loginPw){
+
+  login(loginName, loginPw) {
     //TODO API Call
     //console.log({name: loginName, pass: loginPw});
-    this.api.sendLoginRequest(loginName, loginPw, () => {});
+    this.api.sendLoginRequest(loginName, loginPw, (status) => {
 
-    this.loggedIn.emit({name: loginName, pass: loginPw});
+      console.log(status);
+      if (status == "400") {
+        this.notifyContent = "Reposnse Code 400: Something went wrong";
+        this.notifyType = "alert alert-danger";
+        this.alert = true;
+        console.log(status);
+      } else {
+        this.loggedIn.emit({ name: loginName, pass: loginPw });
+      }
+    });
   }
 
   //TODO API CALL
-  register(name, pw){
+  register(name, pw) {
     //registerName as displayName for now
-    this.api.sendRegisterRequest(name, pw, name, () => {});
+    this.api.sendRegisterRequest(name, pw, name, (status) => {
+      console.log(status);
+      if (status == "400") {
+        this.notifyContent = "Reposnse Code 400: Something went wrong";
+        this.notifyType = "alert alert-danger";
+        this.alert = true;
+        console.log(status);
+      }
+    });
   }
 }
