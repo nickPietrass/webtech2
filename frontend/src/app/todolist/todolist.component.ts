@@ -7,25 +7,18 @@ import { ApiService } from '../api.service';
   styleUrls: ['./todolist.component.css']
 })
 export class TodolistComponent implements OnInit {
-  todos = [];
   new = false;
-  constructor(private api : ApiService) { }
+  constructor(private api: ApiService) { }
 
-  onNewSubmit(todo){
-    //TODO reload list
+  onNewSubmit(todo) {
     this.new = false;
-
-    //refresh todo list
-    console.log(todo)
-    this.api.addTodo(todo);
-    this.todos = this.api.getCachedTodos();
+    console.log(todo);
+    this.api.addTodo(todo, () => {
+      this.api.loadAllTodos(() => { })
+    });
   }
   ngOnInit() {
-    //TODO actually load the list
-
-    //load All Todos from API
-    this.api.loadAllTodos();
-    this.todos = this.api.getCachedTodos();
+    this.api.loadAllTodos(() => { });
   }
 
 }

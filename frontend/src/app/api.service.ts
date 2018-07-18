@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { checkAndUpdatePureExpressionDynamic } from '../../node_modules/@angular/core/src/view/pure_expression';
+import { identifierModuleUrl, TransitiveCompileNgModuleMetadata } from '../../node_modules/@angular/compiler';
 
 @Injectable()
 export class ApiService {
@@ -29,19 +31,7 @@ export class ApiService {
   getCachedTodos = () => {
     return this.cachedTodos;
   }
-  // check if an API Token is provided / a session exists
-  hasToken = () => {
-    if (this.localToken) {
-      return true;
-    }
-    return false;
-  }
 
-  // logout
-
-  logout = () => {
-    this.currentUser = null;
-  }
   // login to API server
   sendLoginRequest = (user, password, callback) => {
     if (!user || !password) {
@@ -113,22 +103,64 @@ export class ApiService {
     });
   }
   // adds a todo
-  addTodo = (todo) => {
-    //TODO actual API call & reload
-    this.cachedTodos.push(todo);
+  addTodo = (todo, callback) => {
+    console.log("create");
+    console.log(todo);
+    this.http.post("api/tudoos/create", todo, { observe: 'response' }).subscribe((data) => {
+      console.log(data);
+      if (callback)
+        this.loadAllTodos(callback);
+      else
+        this.loadAllTodos(() => { });
+    });
+
   }
 
-  // load all Tudoos for user
-  loadAllTodos = (callback) => {
+  deleteTodo = (id, callback) => {
+    console.log(id);
+    this.http.delete("api/tudoos/remove?id=" + id, { observe: 'response' }).subscribe((data) => {
+      this.loadAllTodos(() => {});
+      if (callback)
+        callback()
+    });
 
+  }
+
+  editTodo = (id, title, content) =>{
+    let todo = {
+      tudooUUID : id,
+      title : title,
+      content : content
+    }
+    this.http.put("api/tudoos/editText", todo, { observe: 'response' }).subscribe((data) => {
+      this.loadAllTodos();
+    });
+  }
+  // load all Tudoos for user
+  loadAllTodos = (callback  = () => {}) => {
     const getUrl = 'api/tudoos/userTudoos';
     this.http.get(getUrl, { observe: 'response' }).subscribe((data) => {
-      console.log(data)
+      console.log(data.body)
+      this.cachedTodos = data.body as object[];
     });
   }
 
   //returns todo by id from cached todos
   getTodoById = (id) => {
-    return this.cachedTodos.find((element) => { return element.id == id });
+    return this.cachedTodos.find((element) => { return element.tudooUUID == id });
+  }
+
+  logout = (callback) => {
+    this.http.post("api/users/logout", "", { observe: "response" }).subscribe((data) => {
+      this.currentUser = null;
+      if (callback)
+        callback(data);
+    });
+  }
+
+  deleteAccount = () => {
+    this.http.delete("api/users/remove", { observe: "response" }).subscribe((data) => {
+      this.currentUser = null;
+    });
   }
 }

@@ -1,31 +1,33 @@
 <div [ngSwitch]="viewMode" class="card">
 
   <div *ngSwitchCase="'minimized'" class="card-body">
-    <h4 class="card-title"> {{todo.name}}</h4>
+    <h4 class="card-title"> {{todo.title}}</h4>
     <div class="list-group list-group-flush">
       <button (click)="viewMode = 'maximized'" class="btn btn-primary">Expand</button>
     </div>
   </div>
   <div *ngSwitchCase="'maximized'" class="card-body">
-    <h4 class="card-title"> {{todo.name}}</h4>
+    <h4 class="card-title"> {{todo.title}}</h4>
     <div class="list-group list-group-flush">
       <li class="list-group-item">
         <p> {{todo.content}}</p>
       </li>
       <li class="list-group-item">
         <button (click)="viewMode = 'minimized'" class="btn btn-primary">Minimize</button>
-        <button (click)="viewMode = 'edit'" class="btn btn-primary">edit</button>
+        <button (click)="viewMode = 'edit'" class="btn btn-primary">Edit</button>
 
       </li>
     </div>
   </div>
   <div *ngSwitchCase="'edit'" class="card-body">
-    <h4 class="card-title"> Editing: {{todo.name}}</h4>
-    <input type="text" placeholder="{{todo.name}}" />
-    <textarea>{{todo.content}} </textarea>
+    <h4 class="card-title"> Editing: {{todo.title}}</h4>
+    <input type="text" placeholder="{{todo.name}}" #todoName [(ngModel)]="todoNameVal" />
+    <textarea #todoContent [(ngModel)]="todoContentVal">{{todo.content}} </textarea>
     <div>
       <button (click)="viewMode = 'maximized'" class="btn btn-primary">Cancel</button>
-      <button (click)="onEdit()" class="btn btn-primary">Submit Changes</button>
+      <button (click)="onEdit(todoName.value, todoContent.value)" class="btn btn-primary">Submit</button>
+      <button (click)="this.api.deleteTodo(this.todo.tudooUUID)" class="btn btn-primary">Delete</button>
+
     </div>
   </div>
 </div>

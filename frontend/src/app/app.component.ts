@@ -12,7 +12,7 @@ export class AppComponent implements OnInit{
   currentPage = "login";
 
   ngOnInit() {
-    console.log(this.currentPage)
+   
   }
   onLogin(credentials : object){
     this.isLoggedIn = true;
@@ -20,7 +20,6 @@ export class AppComponent implements OnInit{
   }
 
   onPageChange( newPage : string ){
-    console.log("APP switching to " + newPage)
     this.currentPage = newPage;
   }
   //TODO

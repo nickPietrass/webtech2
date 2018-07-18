@@ -7,13 +7,18 @@
         <li class="list-group-item">
           <a>New name:</a>
           <input type="text" #newName [(ngModel)]="newNameVal"/>
-          <input type="submit" class="btn" (click)="onNewNameClick(newName.value)">
+          <input type="submit" class="btn btn-primary" (click)="onNewNameClick(newName.value)">
         </li>
 
         <li class="list-group-item">
           <a>New password:</a>
           <input type="text" #newPw [(ngModel)]="newPwVal" />
-          <input type="submit" class="btn " (click)="onNewPasswordClick(newPw.value)">
+          <input type="submit" class="btn btn-primary" (click)="onNewPasswordClick(newPw.value)">
+        </li>
+        <li class="list-group-item">
+          <a>Delete Account:</a>
+          <input type="submit" class="btn btn-primary" (click)="this.deleteConfirmShow = !this.deleteConfirmShow">
+          <input type="submit" *ngIf="this.deleteConfirmShow" class="btn" (click)="this.api.deleteAccount()" value="Confirm">
         </li>
       </div>
     </div>

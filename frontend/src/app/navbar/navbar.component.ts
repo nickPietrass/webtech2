@@ -20,7 +20,7 @@ export class NavbarComponent implements OnInit {
     this.pages.push({ name: 'Login', newPage: 'login' });
     this.pages.push({ name: 'Profile', newPage: 'profile' });
     this.pages.push({ name: 'TuDoos', newPage: 'todos' });
-    this.pages.push({ name: 'Groups', newPage: 'groups' });
+    //this.pages.push({ name: 'Groups', newPage: 'groups' });
     this.pages.push({ name: 'Credits', newPage: 'credits' });
 
     console.log("navbar init")

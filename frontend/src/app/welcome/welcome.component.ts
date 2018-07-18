@@ -30,12 +30,10 @@ export class WelcomeComponent implements OnInit {
     //console.log({name: loginName, pass: loginPw});
     this.api.sendLoginRequest(loginName, loginPw, (status) => {
 
-      console.log(status);
       if (status == "400") {
         this.notifyContent = "Reposnse Code 400: Something went wrong";
         this.notifyType = "alert alert-danger";
         this.alert = true;
-        console.log(status);
       } else {
         this.loggedIn.emit({ name: loginName, pass: loginPw });
       }
@@ -46,12 +44,10 @@ export class WelcomeComponent implements OnInit {
   register(name, pw) {
     //registerName as displayName for now
     this.api.sendRegisterRequest(name, pw, name, (status) => {
-      console.log(status);
       if (status == "400") {
         this.notifyContent = "Reposnse Code 400: Something went wrong";
         this.notifyType = "alert alert-danger";
         this.alert = true;
-        console.log(status);
       }
     });
   }

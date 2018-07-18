@@ -9,7 +9,11 @@ import { ApiService } from '../api.service';
 export class TodopreviewComponent implements OnInit {
   @Input() id : string;
   viewMode: string;
-  todo;
+  todo = {
+    tudooUUID : "",
+    title : "",
+    content : ""
+  };
   constructor(private api : ApiService) {
   }
 
@@ -18,10 +22,10 @@ export class TodopreviewComponent implements OnInit {
     this.viewMode = "minimized";
     //load the todo from cache
     this.todo = this.api.getTodoById(this.id);
-    this.todo = this.api.getTodoById(this.id);
   }
-  onEdit() {
+  onEdit(title, content) {
     this.viewMode = "maximized";
     //TODO API Call
+    this.api.editTodo(this.todo.tudooUUID, title, content)
   }
 }

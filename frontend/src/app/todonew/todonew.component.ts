@@ -19,13 +19,11 @@ export class TodonewComponent implements OnInit {
 
   submitNew(name, content){
     //TODO API call
-    console.log(this.todoName);
-    console.log(this.todoContent);
+    console.log(name);
+    console.log(content);
     let newTodo = {
-      id: this.api.getNewId(),
-      name: name,
-      content: content,
-      editableBy: ["dude", "dude2"]
+      title: name,
+      content: content
     }
     this.submit.emit(newTodo);
   }

@@ -15,6 +15,9 @@ export class ProfileComponent implements OnInit {
 
   notify = false;
 
+  deleteConfirmShow = false;
+
+  
   ngOnInit() {
     //TODO API call to replace dummy data
 
