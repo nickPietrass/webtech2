@@ -44,16 +44,14 @@ export class ApiService {
       loginName: user,
       password: password
     };
-
-    console.log("logging in with: " + user + " " + password);
     this.http.post(loginUrl, loginData, { observe: 'response' }).subscribe((resp) => {
-      console.log(resp);
+  
       if (resp.status == 200) {
         loginUrl = 'api/users/get?id=' + user;
         this.http.get(loginUrl, { observe: 'response' }).subscribe((data) => {
-          console.log(data);
+
           this.currentUser = data.body;
-          console.log(this.currentUser);
+  
         });
       }
       callback(resp.status);
@@ -74,10 +72,8 @@ export class ApiService {
       password: password,
       displayName: displayname
     };
-    // TODO save auth token
     this.http.post(loginUrl, loginData, { observe: "response" }).subscribe((data) => {
-      console.log(data);
-      callback(data);
+      callback(data.status);
     });
   }
 
@@ -104,10 +100,9 @@ export class ApiService {
   }
   // adds a todo
   addTodo = (todo, callback) => {
-    console.log("create");
-    console.log(todo);
+
     this.http.post("api/tudoos/create", todo, { observe: 'response' }).subscribe((data) => {
-      console.log(data);
+
       if (callback)
         this.loadAllTodos(callback);
       else
@@ -117,7 +112,7 @@ export class ApiService {
   }
 
   deleteTodo = (id, callback) => {
-    console.log(id);
+
     this.http.delete("api/tudoos/remove?id=" + id, { observe: 'response' }).subscribe((data) => {
       this.loadAllTodos(() => {});
       if (callback)
@@ -126,7 +121,7 @@ export class ApiService {
 
   }
 
-  editTodo = (id, title, content) =>{
+  editTodo = (id, title, content, callback) =>{
     let todo = {
       tudooUUID : id,
       title : title,
@@ -134,13 +129,14 @@ export class ApiService {
     }
     this.http.put("api/tudoos/editText", todo, { observe: 'response' }).subscribe((data) => {
       this.loadAllTodos();
+      if(callback)
+        callback();
     });
   }
   // load all Tudoos for user
   loadAllTodos = (callback  = () => {}) => {
     const getUrl = 'api/tudoos/userTudoos';
     this.http.get(getUrl, { observe: 'response' }).subscribe((data) => {
-      console.log(data.body)
       this.cachedTodos = data.body as object[];
     });
   }

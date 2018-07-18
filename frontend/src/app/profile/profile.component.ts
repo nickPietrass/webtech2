@@ -19,7 +19,7 @@ export class ProfileComponent implements OnInit {
 
   
   ngOnInit() {
-    //TODO API call to replace dummy data
+   
 
   }
 

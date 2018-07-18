@@ -18,9 +18,6 @@ export class TodonewComponent implements OnInit {
   }
 
   submitNew(name, content){
-    //TODO API call
-    console.log(name);
-    console.log(content);
     let newTodo = {
       title: name,
       content: content

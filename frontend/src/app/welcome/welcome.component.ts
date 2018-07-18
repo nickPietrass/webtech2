@@ -26,8 +26,7 @@ export class WelcomeComponent implements OnInit {
   }
 
   login(loginName, loginPw) {
-    //TODO API Call
-    //console.log({name: loginName, pass: loginPw});
+
     this.api.sendLoginRequest(loginName, loginPw, (status) => {
 
       if (status == "400") {
@@ -40,13 +39,18 @@ export class WelcomeComponent implements OnInit {
     });
   }
 
-  //TODO API CALL
   register(name, pw) {
     //registerName as displayName for now
     this.api.sendRegisterRequest(name, pw, name, (status) => {
+      console.log(status)
       if (status == "400") {
-        this.notifyContent = "Reposnse Code 400: Something went wrong";
+        this.notifyContent = "Reponse Code 400: Something went wrong";
         this.notifyType = "alert alert-danger";
+        this.alert = true;
+      }
+      if (status == "200") {
+        this.notifyContent = "Account created!";
+        this.notifyType = "alert alert-success";
         this.alert = true;
       }
     });

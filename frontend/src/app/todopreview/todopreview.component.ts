@@ -25,7 +25,6 @@ export class TodopreviewComponent implements OnInit {
   }
   onEdit(title, content) {
     this.viewMode = "maximized";
-    //TODO API Call
-    this.api.editTodo(this.todo.tudooUUID, title, content)
+    this.api.editTodo(this.todo.tudooUUID, title, content, () =>{this.todo = this.api.getTodoById(this.id)} )
   }
 }

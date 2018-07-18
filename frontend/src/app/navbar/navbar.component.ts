@@ -22,13 +22,9 @@ export class NavbarComponent implements OnInit {
     this.pages.push({ name: 'TuDoos', newPage: 'todos' });
     //this.pages.push({ name: 'Groups', newPage: 'groups' });
     this.pages.push({ name: 'Credits', newPage: 'credits' });
-
-    console.log("navbar init")
-
   }
 
   onPageClick(newPage: string) {
-    console.log("switching to " + newPage);
     this.pageChange.emit(newPage);
   }
 }

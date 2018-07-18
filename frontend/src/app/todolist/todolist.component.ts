@@ -12,7 +12,6 @@ export class TodolistComponent implements OnInit {
 
   onNewSubmit(todo) {
     this.new = false;
-    console.log(todo);
     this.api.addTodo(todo, () => {
       this.api.loadAllTodos(() => { })
     });
