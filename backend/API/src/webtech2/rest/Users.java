@@ -131,7 +131,7 @@ public class Users extends Application {
 			User tempUser = AuthRealm.instance.getCurrentUser();
 			JPAConnector.getAppConnection().changeUserDisplayName(tempUser.getLoginName(), newName);
 			return Response.ok().build();
-		} catch (NoDBEntryException e) {
+		} catch (Exception e) {
 			System.out.println("Error in editDisplayName: " + e.getClass().getSimpleName());
 			return Response.status(400).build();
 		}
@@ -147,7 +147,7 @@ public class Users extends Application {
 			PasswordSaltMixture tempPW = AuthRealm.instance.generatePassword(newPassword);
 			JPAConnector.getAppConnection().changeUserPassword(tempUser.getLoginName(), tempPW.getPassword(), tempPW.getSalt());
 			return Response.ok().build();
-		} catch (NoDBEntryException e) {
+		} catch (Exception e) {
 			System.out.println("Error in editPassword: " + e.getClass().getSimpleName());
 			return Response.status(400).build();
 		}
