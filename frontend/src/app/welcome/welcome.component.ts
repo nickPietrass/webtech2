@@ -40,6 +40,14 @@ export class WelcomeComponent implements OnInit {
   }
 
   register(name, pw) {
+
+    if (!name.includes("@") || !name.includes(".")) {
+     
+        this.notifyContent = "Name has to be a valid email address";
+        this.notifyType = "alert alert-danger";
+        this.alert = true;
+        return;
+      }
     //registerName as displayName for now
     this.api.sendRegisterRequest(name, pw, name, (status) => {
       console.log(status)
