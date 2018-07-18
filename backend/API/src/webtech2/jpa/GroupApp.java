@@ -42,10 +42,10 @@ public class GroupApp {
 	 * Create a new group and persists it in the DB.
 	 * @param groupName group name of the new group.
 	 * @param loginName owner of the new group.
-	 * @return TodooGroup the newly created group.
+	 * @return TudooGroup the newly created group.
 	 * @throws NoDBEntryException if the user does not exist or, for some reason, the persisted group can not be found.
 	 */
-	public TudooGroup registerNewTodooGroup(String groupName, String loginName) throws NoDBEntryException {
+	public TudooGroup registerNewTudooGroup(String groupName, String loginName) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
     	App app = new App();
     	
@@ -91,9 +91,9 @@ public class GroupApp {
 	//Methods used to get something from the DB
 	
 	/**
-	 * Gets a TodooGroup from the DB.
+	 * Gets a TudooGroup from the DB.
 	 * @param groupUUID the group id
-	 * @return TodooGroup the group
+	 * @return TudooGroup the group
 	 * @throws NoDBEntryException if the group with the given group ID does not exist.
 	 */
 	public TudooGroup getGroupByID(String groupID) throws NoDBEntryException {
@@ -102,13 +102,13 @@ public class GroupApp {
 		//create criteria
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<TudooGroup> cq = cb.createQuery(TudooGroup.class);
-		Root<TudooGroup> user = cq.from(TudooGroup.class);
+		Root<TudooGroup> tudoogroup = cq.from(TudooGroup.class);
 		
 		//set the predicate
-		Predicate groupUUIDMatches = cb.equal(user.get("groupUUID"), groupID);
+		Predicate groupUUIDMatches = cb.equal(tudoogroup.get("groupUUID"), groupID);
 		
 		//select
-		cq.select(user).where(groupUUIDMatches);
+		cq.select(tudoogroup).where(groupUUIDMatches);
 		TypedQuery<TudooGroup> query = em.createQuery(cq);
 		ArrayList<TudooGroup> result = new ArrayList<TudooGroup>(query.getResultList());
 		em.close();
@@ -123,7 +123,7 @@ public class GroupApp {
 	/**
 	 * Get all groups where the give user is owner of.
 	 * @param loginName user
-	 * @return ArrayList<TodooGroup> groups with the given user as the owner.
+	 * @return ArrayList<TudooGroup> groups with the given user as the owner.
 	 * @throws NoDBEntryException if the user does not exist.
 	 */
 	public ArrayList<TudooGroup> getGroupsWhereOwnerIs(String loginName) throws NoDBEntryException {
@@ -141,13 +141,13 @@ public class GroupApp {
 		//create criteria
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<TudooGroup> cq = cb.createQuery(TudooGroup.class);
-		Root<TudooGroup> user = cq.from(TudooGroup.class);
+		Root<TudooGroup> tudoogroup = cq.from(TudooGroup.class);
 		
 		//set the predicate
-		Predicate groupUUIDMatches = cb.equal(user.get("groupOwner"), managedUser);
+		Predicate groupUUIDMatches = cb.equal(tudoogroup.get("groupOwner"), managedUser);
 		
 		//select
-		cq.select(user).where(groupUUIDMatches);
+		cq.select(tudoogroup).where(groupUUIDMatches);
 		TypedQuery<TudooGroup> query = em.createQuery(cq);
 		ArrayList<TudooGroup> result = new ArrayList<TudooGroup>(query.getResultList());
 		em.close();
