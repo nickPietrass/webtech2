@@ -102,7 +102,23 @@ public class Users extends Application {
 			}
 		} catch (Exception e) {
 			System.out.println("ERROR: " + e.getMessage());
-			return Response.status(400).build();
+			return Response.status(404).build();
+		}
+	}
+	
+	@POST
+	@Path("/logout")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response logOutUser() { 
+		try {
+			if(AuthRealm.instance.getCurrentSubject().isAuthenticated()) {
+				AuthRealm.instance.logoutUser();
+				return Response.ok().build();
+			}else
+				return Response.status(400).build();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e.getMessage());
+			return Response.status(404).build();
 		}
 	}
 

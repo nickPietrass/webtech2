@@ -75,6 +75,11 @@ public class AuthRealm extends JdbcRealm {
 			return false;
 		}
 	}
+	
+	public void logoutUser() {
+		org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
+		currentUser.logout();
+	}
 
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
@@ -101,7 +106,7 @@ public class AuthRealm extends JdbcRealm {
 		return info;
 	}
 	
-	private Subject getCurrentSubject() {
+	public Subject getCurrentSubject() {
 		if (factory == null) {
 			System.out.println("AuthRealm not created");
 		}
