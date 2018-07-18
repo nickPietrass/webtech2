@@ -1,7 +1,5 @@
 package webtech2.rest;
 
-import java.util.regex.Pattern;
-
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -30,7 +28,7 @@ import webtech2.rest.temporary.params.NewUser;
 @Path("/users")
 public class Users extends Application {
 	
-	private static final String EMAIL_REGEX = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,6}$"; 
+//	private static final String EMAIL_REGEX = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,6}$"; 
 
 	@GET
 	@Path("/get")
@@ -62,8 +60,11 @@ public class Users extends Application {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response registerUser(NewUser idObject) {
 		try {
-			Pattern ptr = Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE);
-			if(!ptr.matcher(idObject.getLoginName()).matches()) {
+//			Pattern ptr = Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE);
+//			if(!ptr.matcher(idObject.getLoginName()).matches()) {
+//				return Response.status(400).build();
+//			}
+			if(!(idObject.getLoginName().contains("@") && idObject.getLoginName().contains("."))){
 				return Response.status(400).build();
 			}
 			PasswordSaltMixture tempPW = AuthRealm.instance.generatePassword(idObject.getPassword());
@@ -91,15 +92,18 @@ public class Users extends Application {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response loginUser(SerializableUserID idObject) { 
 		try {
-			AuthRealm.instance.loginUser(
+			if(AuthRealm.instance.loginUser(
 					idObject.getLoginName(), 
 					idObject.getPassword()
-					);
+					)) {
+				return Response.ok().build();
+			}else {
+				return Response.status(400).build();
+			}
 		} catch (Exception e) {
 			System.out.println("ERROR: " + e.getMessage());
 			return Response.status(400).build();
 		}
-		return Response.ok().build();
 	}
 
 	@PUT

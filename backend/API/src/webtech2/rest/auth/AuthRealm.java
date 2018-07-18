@@ -56,7 +56,11 @@ public class AuthRealm extends JdbcRealm {
 		}
 	}
 
-	public void loginUser(String loginName, String password) throws AuthenticationException, InvalidSessionException, NoDBEntryException {
+	/**
+	 * Tries to log in a user.
+	 * @return true if logged in NOW, false if was already logged in.
+	 */
+	public boolean loginUser(String loginName, String password) throws AuthenticationException, InvalidSessionException, NoDBEntryException {
 		Subject currentUser = getCurrentSubject();
 
 		if (!currentUser.isAuthenticated()) {
@@ -66,6 +70,9 @@ public class AuthRealm extends JdbcRealm {
 			System.out.println("Login of new user successful!");
 			currentUser.getSession().setAttribute("actualUser", App.instance.getUserByLoginName(loginName));
 			System.out.println("Attached JPA user to new user!");
+			return true;
+		}else {
+			return false;
 		}
 	}
 
