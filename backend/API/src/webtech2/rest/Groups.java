@@ -150,7 +150,7 @@ public class Groups extends Application{
     
     @DELETE
     @Path("/remove")
-    public Response removeGroup(String groupID){
+    public Response removeGroup(@QueryParam("id") String groupID){
     	try {
     		TudooGroup tempGroup = JPAConnector.getGroupAppConnection().getGroupByID(groupID);
     		if(!tempGroup.getGroupOwner().getLoginName().equals(AuthRealm.instance.getCurrentUser().getLoginName())) {
