@@ -1,25 +1,24 @@
 <div class="col-md-6" *ngIf="this.api.currentUser">
-
+  <app-notify *ngIf="notify" [type]="notifyType" [content]="notifyContent" ></app-notify>
   <div class="card">
     <div class="card-body">
       <h3 class="card-title">Profile of {{this.api.currentUser.displayName}}</h3>
       <div class="list-group list-group-flush">
         <li class="list-group-item">
           <a>New name:</a>
-          <input type="text" />
-          <input type="submit">
+          <input type="text" #newName [(ngModel)]="newNameVal"/>
+          <input type="submit" class="btn" (click)="onNewNameClick(newName.value)">
         </li>
 
         <li class="list-group-item">
           <a>New password:</a>
-          <input type="text" />
-          <input type="submit">
+          <input type="text" #newPw [(ngModel)]="newPwVal" />
+          <input type="submit" class="btn " (click)="onNewPasswordClick(newPw.value)">
         </li>
       </div>
     </div>
   </div>
 </div>
-
 
 <div *ngIf="!this.api.currentUser">
   <p>Not logged in.</p>

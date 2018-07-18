@@ -9,16 +9,47 @@ import { ApiService } from '../api.service';
 export class ProfileComponent implements OnInit {
 
   constructor(private api: ApiService) { }
-  user;
+
+  notifyType;
+  notifyContent;
+
+  notify = false;
 
   ngOnInit() {
     //TODO API call to replace dummy data
-    
-  }
-
-  onChangeName() {
 
   }
 
+  onNewNameClick = (name) => {
+    this.api.changeDisplayname(name, (resp) => {
+
+      if (resp.status == "400") {
+        this.notifyContent = "Something went wrong";
+        this.notifyType = "alert alert-danger";
+        this.notify = true;
+      }
+      if (resp.status == "200") {
+        this.notifyContent = "Changed DisplayName successfully";
+        this.notifyType = "alert alert-success";
+        this.notify = true;
+      }
+
+    });
+  }
+
+  onNewPasswordClick = (pw) => {
+    this.api.changePassword(pw, (resp) => {
+      if (resp.status == "400") {
+        this.notifyContent = "Something went wrong";
+        this.notifyType = "alert alert-danger";
+        this.notify = true;
+      }
+      if (resp.status == "200") {
+        this.notifyContent = "Changed Password successfully";
+        this.notifyType = "alert alert-success";
+        this.notify = true;
+      }
+    })
+  }
 
 }
