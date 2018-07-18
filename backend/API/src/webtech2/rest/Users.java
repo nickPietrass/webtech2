@@ -160,6 +160,7 @@ public class Users extends Application {
 		try {
 			// Get user if possible
 			User tempUser = AuthRealm.instance.getCurrentUser();
+			AuthRealm.instance.logoutUser();
 			JPAConnector.getAppConnection().deleteUser(tempUser.getLoginName());
 			return Response.ok().build();
 		} catch (Exception e) {
