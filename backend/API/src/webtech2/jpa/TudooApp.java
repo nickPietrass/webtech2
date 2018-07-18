@@ -267,10 +267,10 @@ public class TudooApp {
 		//create criteria
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Tudoo> cq = cb.createQuery(Tudoo.class);
-		Root<Tudoo> user = cq.from(Tudoo.class);
+		Root<Tudoo> tudoo = cq.from(Tudoo.class);
 		
 		//set the predicate
-		Predicate tudooIDMatches = cb.equal(user.get("todooUUID"), tudooID);
+		Predicate tudooIDMatches = cb.equal(tudoo.get("tudooUUID"), tudooID);
 		
 		//select
 		cq.select(user).where(tudooIDMatches);
