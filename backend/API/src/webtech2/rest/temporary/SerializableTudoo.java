@@ -22,17 +22,21 @@ public class SerializableTudoo {
 	 * Constructor to be used internally.
 	 * @param password Hashed PW. 
 	 */
-	public SerializableTudoo(String tudooUUID, String title, String content, String owner, String created) {
+	public SerializableTudoo(String tudooUUID, String title, String content, String owner, String created,
+			String[] visibleBy, String[] editableBy) {
 		this.tudooUUID = tudooUUID;
 		this.title = title;
 		this.content = content;
 		this.owner = owner;
 		this.created = created;
+		this.visibleBy = visibleBy;
+		this.editableBy = editableBy;
 	}
 	
 	public String getTudooUUID() {
 		return tudooUUID;
 	}
+	
 	public String getTitle() {
 		return title;
 	}

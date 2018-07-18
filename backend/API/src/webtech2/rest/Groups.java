@@ -60,7 +60,7 @@ public class Groups extends Application{
     @Produces(MediaType.APPLICATION_JSON)
     public Response createGroup(String groupName){
     	try {
-			TudooGroup tempGroup = JPAConnector.getGroupAppConnection().registerNewTodooGroup(groupName, AuthRealm.instance.getCurrentUser().getLoginName());
+			TudooGroup tempGroup = JPAConnector.getGroupAppConnection().registerNewTudooGroup(groupName, AuthRealm.instance.getCurrentUser().getLoginName());
 			return Response.ok(
 					new SerializableGroup(
 							tempGroup.getGroupUUID(),
@@ -81,7 +81,7 @@ public class Groups extends Application{
     public Response addUserToGroup(GroupMoveAction actionObject) {
     	try {
     		TudooGroup tempGroup = JPAConnector.getGroupAppConnection().getGroupByID(actionObject.getGroupID());
-    		if(!tempGroup.getGroupOwner().equals(AuthRealm.instance.getCurrentUser())) {
+    		if(!tempGroup.getGroupOwner().getLoginName().equals(AuthRealm.instance.getCurrentUser().getLoginName())) {
     			return Response.status(400).build();
     		}
 			JPAConnector.getGroupAppConnection().addMemberToGroup(actionObject.getGroupID(),actionObject.getLoginName());
@@ -106,7 +106,7 @@ public class Groups extends Application{
     public Response removeUserFromGroup(GroupMoveAction actionObject) {
     	try {
     		TudooGroup tempGroup = JPAConnector.getGroupAppConnection().getGroupByID(actionObject.getGroupID());
-    		if(!tempGroup.getGroupOwner().equals(AuthRealm.instance.getCurrentUser())) {
+    		if(!tempGroup.getGroupOwner().getLoginName().equals(AuthRealm.instance.getCurrentUser().getLoginName())) {
     			return Response.status(400).build();
     		}
     		JPAConnector.getGroupAppConnection().deleteUserFromGroup(actionObject.getGroupID(),actionObject.getLoginName());
@@ -153,7 +153,7 @@ public class Groups extends Application{
     public Response removeGroup(String groupID){
     	try {
     		TudooGroup tempGroup = JPAConnector.getGroupAppConnection().getGroupByID(groupID);
-    		if(!tempGroup.getGroupOwner().equals(AuthRealm.instance.getCurrentUser())) {
+    		if(!tempGroup.getGroupOwner().getLoginName().equals(AuthRealm.instance.getCurrentUser().getLoginName())) {
     			return Response.status(400).build();
     		}
 			JPAConnector.getGroupAppConnection().deleteGroup(groupID);

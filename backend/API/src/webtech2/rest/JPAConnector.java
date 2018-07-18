@@ -19,13 +19,13 @@ public class JPAConnector {
 	
 	public static GroupApp getGroupAppConnection() {
 		if(groupAppConnection==null)
-			groupAppConnection = appConnection.getGroupApp();
+			groupAppConnection = getAppConnection().getGroupApp();
 		return groupAppConnection;
 	}
 	
 	public static TudooApp getTudooAppConnection() {
 		if(tudooAppConnection==null)
-			tudooAppConnection = appConnection.getTudooApp();
+			tudooAppConnection = getAppConnection().getTudooApp();
 		return tudooAppConnection;
 	}
 	

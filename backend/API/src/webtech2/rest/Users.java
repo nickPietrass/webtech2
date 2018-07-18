@@ -47,7 +47,12 @@ public class Users extends Application {
 							tempUser.getDisplayName(),
 							tempUser.getCreationDate())
 					).build();
-		} catch (NoDBEntryException e) {
+		} catch (Exception e) {
+			if(e instanceof NoDBEntryException)
+				System.out.println("Someone tried to make an already existing account!");
+			else {
+				System.out.println("Error in remove: " + e.getClass().getSimpleName());
+			}
 			return Response.status(400).build();
 		}
 	}
@@ -75,7 +80,7 @@ public class Users extends Application {
 			if(e instanceof DuplicateDBEntryException)
 				System.out.println("Someone tried to make an already existing account!");
 			else {
-				System.out.println("ERROR: " + e.getMessage());
+				System.out.println("Error in remove: " + e.getClass().getSimpleName());
 			}
 			return Response.status(400).build();
 		}
@@ -139,7 +144,6 @@ public class Users extends Application {
 			return Response.ok().build();
 		} catch (Exception e) {
 			System.out.println("Error in remove: " + e.getClass().getSimpleName());
-			e.printStackTrace();
 			return Response.status(400).build();
 		}
 	}

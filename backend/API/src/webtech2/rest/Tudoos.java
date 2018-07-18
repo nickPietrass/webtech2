@@ -41,16 +41,17 @@ public class Tudoos extends Application{
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTudoo(SerializableTudoo tudooSkeleton){ //Check if Jax-RS really uses this object even though he can't fill it completely
     	try {
-			return Response.ok(JPAConnector
+			return Response.ok(createSendableTudoo(JPAConnector
 						.getTudooAppConnection()
-						.registerNewTodoo(
+						.registerNewTudoo(
 								tudooSkeleton.getTitle(), 
 								tudooSkeleton.getContent(), 
 								AuthRealm.instance.getCurrentUser().getLoginName()
+								)
 						)
 					).build();
 		} catch (Exception e) {
-			System.out.println("ERROR: " + e.getMessage());
+			System.out.println("Error in remove: " + e.getClass().getSimpleName());
 			return Response.status(400).build();
 		}
     }
@@ -59,17 +60,19 @@ public class Tudoos extends Application{
     @Path("/editText")
     @Produces(MediaType.APPLICATION_JSON)
     public Response editTudooText(SerializableTudoo tudooSkeleton){
-    	//TODO check if uuid is given. If not, wrong!
     	try {
 			if(tudooSkeleton.getTudooUUID()==null || JPAConnector.getTudooAppConnection().getTudooByID(tudooSkeleton.getTudooUUID())==null) {
 				return Response.status(400).build();
 			}
 			JPAConnector.getTudooAppConnection().changeTudooContent(tudooSkeleton.getTudooUUID(), tudooSkeleton.getTitle(), tudooSkeleton.getContent());
-	        return Response.ok(
+	        return Response.ok(createSendableTudoo(
 	        		JPAConnector.getTudooAppConnection().getTudooByID(tudooSkeleton.getTudooUUID())
-	        		).build();
-		} catch (NoDBEntryException e) {
-			System.out.println("ERROR: " + e.getMessage());
+	        		)).build();
+		} catch (Exception e) {
+			if(e instanceof NoDBEntryException)
+				System.out.println("ERROR: there is no Tudoo with that ID");
+			else
+				System.out.println("Error in remove: " + e.getClass().getSimpleName());
 			return Response.status(400).build();
 		}
     }
@@ -86,18 +89,14 @@ public class Tudoos extends Application{
 			ArrayList<Tudoo> tudooList = JPAConnector.getTudooAppConnection().getAllVisibleTudoosOfUser(AuthRealm.instance.getCurrentUser().getLoginName());
 			SerializableTudoo[] serializableTudoos = new SerializableTudoo[tudooList.size()];
 			for(int i = 0; i<tudooList.size(); i++) {
-				Tudoo tempTudoo = tudooList.get(i);
-				serializableTudoos[i] = new SerializableTudoo(
-						tempTudoo.getTudooUUID(), 
-						tempTudoo.getTitle(), 
-						tempTudoo.getContent(), 
-						tempTudoo.getTudooOwner().getLoginName(), 
-						tempTudoo.getCreationDate()
-						);
+				serializableTudoos[i] = createSendableTudoo(tudooList.get(i));
 			}
 			return Response.ok(serializableTudoos).build();
 		} catch (Exception e) {
-			System.out.println("ERROR: " + e.getMessage());
+			if(e instanceof NoDBEntryException)
+				System.out.println("ERROR: there is no Tudoo with that ID");
+			else
+				System.out.println("Error in remove: " + e.getClass().getSimpleName());
 			return Response.status(400).build();
 		}
     }
@@ -115,38 +114,35 @@ public class Tudoos extends Application{
     @Produces(MediaType.APPLICATION_JSON)
     public Response updatePermission(TudooPermissionChange permChange) {
     	try {
-    		boolean isOwner = JPAConnector.getTudooAppConnection().getTudooByID(permChange.getTudooID()).getTudooOwner().getLoginName()
+    		boolean isOwner = JPAConnector.getTudooAppConnection().getTudooByID(permChange.getTudooUUID()).getTudooOwner().getLoginName()
     				.equals(AuthRealm.instance.getCurrentUser().getLoginName());
-    		boolean success = false;
+    		
+    		//Only owners can change perms.
+    		if(!isOwner) return Response.status(400).build();
+    		
 	    	if(permChange.getPermissionLevel() == PermissionLevel.NONE.getValue()) {
-	    		//If he is the owner he can't do that
-	    		if(isOwner) {
+	    		//If he is the owner he can't remove himself from the Tudoo.
+	    		if(permChange.getTargetID().equals(AuthRealm.instance.getCurrentUser().getLoginName())) {
 	    			return Response.status(400).build();
 	    		}
-	    		JPAConnector.getTudooAppConnection().addUserOrGroupToTudoo(permChange.getTudooID(), permChange.getTargetID());
-	    		success = true;
+	    		JPAConnector.getTudooAppConnection().deleteUserOrGroupFromTudoo(permChange.getTudooUUID(), permChange.getTargetID());
 	    	}else {
 	    		if(permChange.getPermissionLevel() == PermissionLevel.VIEW.getValue()) {
-	        		if(isOwner) {
-	        			JPAConnector.getTudooAppConnection().changeUserOrGroupPermissionToVisibleByOnly(permChange.getTudooID(), permChange.getTargetID());
-	        			success = true;
-	        		}
+	        			JPAConnector.getTudooAppConnection().changeUserOrGroupPermissionToVisibleByOnly(permChange.getTudooUUID(), permChange.getTargetID());
 	        	}else {
 	        		if(permChange.getPermissionLevel() == PermissionLevel.EDIT.getValue()) {
-	        			if(isOwner) {
-	            			JPAConnector.getTudooAppConnection().deleteUserOrGroupFromTudoo(permChange.getTudooID(), permChange.getTargetID());
-	            			success = true;
-	            		}
+	        			JPAConnector.getTudooAppConnection().addUserOrGroupToTudoo(permChange.getTudooUUID(), permChange.getTargetID());
 	            	}
 	        	}
 	    	}
-	    	return success ? 
-	    			Response.ok(JPAConnector.getTudooAppConnection().getTudooByID(permChange.getTudooID())).build() 
-	    			: Response.status(400).build();
+	    	return Response.ok(createSendableTudoo(JPAConnector.getTudooAppConnection().getTudooByID(permChange.getTudooUUID()))).build();
     	
     	}catch(Exception e) {
-    		System.out.println("ERROR:" + e.getMessage());
-    		return Response.status(400).build();
+    		if(e instanceof NoDBEntryException)
+				System.out.println("ERROR: there is no Tudoo with that ID");
+    		else
+				System.out.println("Error in remove: " + e.getClass().getSimpleName());
+			return Response.status(400).build();
     	}
     	
     }
@@ -161,11 +157,29 @@ public class Tudoos extends Application{
     				&& !tempTudoo.getEditableBy().contains(AuthRealm.instance.getCurrentUser().getLoginName())) {
     			return Response.status(400).build();
     		}
-			JPAConnector.getTudooAppConnection().deleteTodoo(tudooUUID);
+			JPAConnector.getTudooAppConnection().deleteTudoo(tudooUUID);
 			return Response.ok().build();
-		} catch (Exception e) {
-			System.out.println("ERROR: " + e.getMessage());
+		} catch(Exception e) {
+    		if(e instanceof NoDBEntryException)
+				System.out.println("ERROR: there is no Tudoo with that ID");
+			else
+				System.out.println("Error in remove: " + e.getClass().getSimpleName());
 			return Response.status(400).build();
-		}
+    	}
+    }
+    
+    /**
+     * Helper method
+     */
+    private SerializableTudoo createSendableTudoo(Tudoo tudoo) {
+    	return new SerializableTudoo(
+    			tudoo.getTudooUUID(), 
+    			tudoo.getTitle(), 
+    			tudoo.getContent(), 
+    			tudoo.getTudooOwner().getLoginName(), 
+    			tudoo.getCreationDate(),
+    			tudoo.getVisibleBy().toArray(new String[0]),
+    			tudoo.getEditableBy().toArray(new String[0])
+			);
     }
 }

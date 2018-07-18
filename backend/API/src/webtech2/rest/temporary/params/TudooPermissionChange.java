@@ -5,7 +5,7 @@ package webtech2.rest.temporary.params;
  * @author Ilja
  */
 public class TudooPermissionChange {
-	private String tudooID,targetID;
+	private String tudooUUID,targetID;
 	private int permissionLevel;
 	
 	/**
@@ -13,18 +13,18 @@ public class TudooPermissionChange {
 	 */
 	public TudooPermissionChange() {}
 
-	public TudooPermissionChange(String tudooID, String targetID, int permissionLevel) {
-		this.tudooID = tudooID;
+	public TudooPermissionChange(String tudooUUID, String targetID, int permissionLevel) {
+		this.tudooUUID = tudooUUID;
 		this.targetID = targetID;
 		this.permissionLevel = permissionLevel;
 	}
 
-	public String getTudooID() {
-		return tudooID;
+	public String getTudooUUID() {
+		return tudooUUID;
 	}
 
-	public void setTudooID(String tudooID) {
-		this.tudooID = tudooID;
+	public void setTudooUUID(String tudooUUID) {
+		this.tudooUUID = tudooUUID;
 	}
 
 	public String getTargetID() {
