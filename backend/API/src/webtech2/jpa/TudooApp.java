@@ -36,7 +36,7 @@ public class TudooApp {
 		emf.close();
 	}
 	
-	public Tudoo registerNewTodoo(String title, String content, String loginName) throws NoDBEntryException {
+	public Tudoo registerNewTudoo(String title, String content, String loginName) throws NoDBEntryException {
 		EntityManager em = emf.createEntityManager();
 		App app = new App();
     	
@@ -107,7 +107,7 @@ public class TudooApp {
 
 	    	//set the update and where clause
 	    	update.set("title", newTitle);
-	    	Predicate tudooIDMatches = cb.equal(tudoo.get("todooUUID"), tudooID);
+	    	Predicate tudooIDMatches = cb.equal(tudoo.get("tudooUUID"), tudooID);
 	    	update.where(tudooIDMatches);
 	    	
 	    	EntityTransaction tx = em.getTransaction();
@@ -205,7 +205,7 @@ public class TudooApp {
     	em.close();	
 	}
 	
-	public void deleteTodoo(String tudooID) throws NoDBEntryException {
+	public void deleteTudoo(String tudooID) throws NoDBEntryException {
 		if (tudooDoesNotExist(tudooID)) {
     		throw new NoDBEntryException();
     	}
@@ -215,10 +215,10 @@ public class TudooApp {
     	//create criteria delete
     	CriteriaBuilder cb = em.getCriteriaBuilder();
     	CriteriaDelete<Tudoo> cd = cb.createCriteriaDelete(Tudoo.class);
-    	Root<Tudoo> user = cd.from(Tudoo.class);
+    	Root<Tudoo> tudoo = cd.from(Tudoo.class);
     	
     	//set predicate
-		Predicate TudooIDMatches = cb.equal(user.get("tudooUUID"), tudooID);
+		Predicate TudooIDMatches = cb.equal(tudoo.get("tudooUUID"), tudooID);
 		
 		//select
 		cd.where(TudooIDMatches);
@@ -273,7 +273,7 @@ public class TudooApp {
 		Predicate tudooIDMatches = cb.equal(tudoo.get("tudooUUID"), tudooID);
 		
 		//select
-		cq.select(user).where(tudooIDMatches);
+		cq.select(tudoo).where(tudooIDMatches);
 		TypedQuery<Tudoo> query = em.createQuery(cq);
 		ArrayList<Tudoo> result = new ArrayList<Tudoo>(query.getResultList());
 		em.close();
