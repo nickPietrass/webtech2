@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { checkAndUpdatePureExpressionDynamic } from '../../node_modules/@angular/core/src/view/pure_expression';
 import { identifierModuleUrl, TransitiveCompileNgModuleMetadata } from '../../node_modules/@angular/compiler';
+import { userInfo } from 'os';
 
 @Injectable()
 export class ApiService {
@@ -32,6 +33,18 @@ export class ApiService {
     return this.cachedTodos;
   }
 
+  shareTodo = (user, todo, callback) => {
+    let data = {
+      tudooUUID: todo,
+      targetID: user,
+      permissionLevel: 2
+    }
+    this.http.put("/api/tudoos/updatePermission", data, { observe: 'response' }).subscribe((resp) => {
+      if (callback)
+        callback(resp);
+      console.log(resp);
+    });
+  }
   // login to API server
   sendLoginRequest = (user, password, callback) => {
     if (!user || !password) {
@@ -45,13 +58,13 @@ export class ApiService {
       password: password
     };
     this.http.post(loginUrl, loginData, { observe: 'response' }).subscribe((resp) => {
-  
+
       if (resp.status == 200) {
         loginUrl = 'api/users/get?id=' + user;
         this.http.get(loginUrl, { observe: 'response' }).subscribe((data) => {
 
           this.currentUser = data.body;
-  
+
         });
       }
       callback(resp.status);
@@ -114,27 +127,27 @@ export class ApiService {
   deleteTodo = (id, callback) => {
 
     this.http.delete("api/tudoos/remove?id=" + id, { observe: 'response' }).subscribe((data) => {
-      this.loadAllTodos(() => {});
+      this.loadAllTodos(() => { });
       if (callback)
         callback()
     });
 
   }
 
-  editTodo = (id, title, content, callback) =>{
+  editTodo = (id, title, content, callback) => {
     let todo = {
-      tudooUUID : id,
-      title : title,
-      content : content
+      tudooUUID: id,
+      title: title,
+      content: content
     }
     this.http.put("api/tudoos/editText", todo, { observe: 'response' }).subscribe((data) => {
       this.loadAllTodos();
-      if(callback)
+      if (callback)
         callback();
     });
   }
   // load all Tudoos for user
-  loadAllTodos = (callback  = () => {}) => {
+  loadAllTodos = (callback = () => { }) => {
     const getUrl = 'api/tudoos/userTudoos';
     this.http.get(getUrl, { observe: 'response' }).subscribe((data) => {
       this.cachedTodos = data.body as object[];

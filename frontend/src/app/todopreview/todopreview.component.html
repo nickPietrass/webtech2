@@ -15,7 +15,7 @@
       <li class="list-group-item">
         <button (click)="viewMode = 'minimized'" class="btn btn-primary">Minimize</button>
         <button (click)="viewMode = 'edit'" class="btn btn-primary">Edit</button>
-
+        <button (click)="viewMode = 'share'" class="btn btn-primary">Share</button>
       </li>
     </div>
   </div>
@@ -27,7 +27,14 @@
       <button (click)="viewMode = 'maximized'" class="btn btn-primary">Cancel</button>
       <button (click)="onEdit(todoName.value, todoContent.value)" class="btn btn-primary">Submit</button>
       <button (click)="this.api.deleteTodo(this.todo.tudooUUID)" class="btn btn-primary">Delete</button>
-
+    </div>
+  </div>
+  <div *ngSwitchCase="'share'" class="card-body">
+    <h4 class="card-title">{{todo.title}}</h4>
+    <input type="text" #shareName [(ngModel)]="shareNameVal" />
+    <div>
+      <button (click)="onShare(shareName.value)" class="btn btn-primary">Submit</button>
+      <button (click)="viewMode = 'maximized'" class="btn btn-primary">Cancel</button>
     </div>
   </div>
 </div>
