@@ -40,6 +40,10 @@ public class App {
 	 * Standard constructor
 	 */
 	public App() {
+		/**
+		 * Give the EntityMangagerFactory information about the persistence context. "tudoo-persistence-unit" is configured in WebContent/META-INF/persistence.xml
+		 * In other words: Its properties. Tells the EntityManagerFactory what it is, where the DB is and how it should behave. 
+		 */
 		this.emf = Persistence.createEntityManagerFactory("tudoo-persistence-unit");
 		this.groupApp = new GroupApp(emf);
 		this.tudooApp = new TudooApp(emf);
@@ -86,11 +90,15 @@ public class App {
 			throw new DuplicateDBEntryException("Login name already taken");
 		}
 		
+		//create empty User object
 		User user = new User();
+		
+		//format date
 		DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
 		Date date = Calendar.getInstance().getTime();
 		String created = dateFormat.format(date);
 		
+		//set User information
 		user.setLoginName(loginName);
 		user.setPassword(password);
 		user.setDisplayName(displayName);
@@ -116,26 +124,61 @@ public class App {
 		}
 		
 		//create EntityManager
+		/**
+		 * emf already knows what context it lies in. The created EntityManager will handle everything within this context.
+		 */
 		EntityManager em = emf.createEntityManager();
 		
 		//create update
+		/**
+		 * Criteria API. Every CriteriaQuery/CriteriaUpdate/CriteriaDelete needs a type, in this case: User.
+		 */
     	CriteriaBuilder cb = em.getCriteriaBuilder();
     	CriteriaUpdate<User> update = cb.createCriteriaUpdate(User.class);
     	
     	//set the root class
+    	/**
+    	 * Every CriteriaQuery/CriteriaUpdate/CriteriaDelete needs a Root<T>. This is equivalent to SQL's "FROM user [alias of your choice]"
+    	 */
     	Root<User> user = update.from(User.class);
     	
     	//set the update and where clause
     	update.set("displayName", newDisplayName);
+    	/**
+    	 * Predicate is a combined boolean expression
+    	 * This is equivalent to SQL's "user.loginName = loginName"
+    	 */
     	Predicate loginNameMatches = cb.equal(user.get("loginName"), loginName);
+    	
+    	/**
+    	 * Equivalent to SQL's "WHERE user.loginName = loginName"
+    	 */
     	update.where(loginNameMatches);
     	
     	//change displayName
+    	/**
+    	 * Every object that needs to be persisted/updated/deleted must be in a transaction context.
+    	 * If something goes wrong before and between begin() and commit(), then the changes will not be persisted.
+    	 */
     	EntityTransaction tx = em.getTransaction();
     	tx.begin();
+    	
+    	/**
+    	 * Update needs to be executed via executeUpdate().
+    	 * createQuery only creates a query, duh.
+    	 */
     	em.createQuery(update).executeUpdate();
     	tx.commit();
+    	
+    	/**
+    	 * Release all resources.
+    	 */
     	em.close();
+    	
+    	/**
+    	 * Now that I think about it... I should have put everything between begin() and commit().
+    	 * Also there exists an @Transactional annoation that will handle everything about transactions for you.
+    	 */
 	}
 	
 	/**
@@ -197,15 +240,32 @@ public class App {
 		//create criteria
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		
+		/**
+		 * Don't forget the Root<T>
+		 */
 		Root<User> user = cq.from(User.class);
 		
 		//set the predicate
 		Predicate loginNameMatches = cb.equal(user.get("loginName"), loginName);
 		
 		//select
+		/**
+		 * Equivalent to SQL's "SELECT * FROM user WHERE user.loginName = loginName"
+		 */
 		cq.select(user).where(loginNameMatches);
+		
+		/**
+		 * Even the Query needs a type.
+		 */
 		TypedQuery<User> query = em.createQuery(cq);
 		ArrayList<User> result = new ArrayList<User>(query.getResultList());
+		
+		/**
+		 * An example of why the context is important:
+		 * If you em.close() at 255 and called query.getResultList() at 257, you will get an exception.
+		 * Everything you fetched with the CriteriaQuery will be lost.
+		 */
 		em.close();
 		
 		if (result.size() > 0) {
@@ -246,6 +306,10 @@ public class App {
 		//Removes groups where user is the owner
 		//create criteria delete
     	CriteriaBuilder cb = em.getCriteriaBuilder();
+    	
+    	/**
+    	 * CriteriaDelete analogous to CriteriaUpdate
+    	 */
     	CriteriaDelete<TudooGroup> cdg = cb.createCriteriaDelete(TudooGroup.class);
     	Root<TudooGroup> g = cdg.from(TudooGroup.class);
     	
@@ -260,6 +324,23 @@ public class App {
 		tx.begin();
 		em.createQuery(cdg).executeUpdate();
 		tx.commit();
+		
+		//Removes tudoos where user is the owner
+		CriteriaDelete<Tudoo> cdt = cb.createCriteriaDelete(Tudoo.class);
+		Root<Tudoo> t = cdt.from(Tudoo.class);
+		
+		//set predicate
+		Predicate userIsOwnerOfTudoo = cb.equal(t.get("tudooOwner"), user);
+		
+		//select
+		cdt.where(userIsOwnerOfTudoo);
+		
+		//delete
+		tx = em.getTransaction();
+		tx.begin();
+		em.createQuery(cdt).executeUpdate();
+		tx.commit();
+		
 		
 		//Removes the user from the user table
     	//create criteria delete
@@ -280,6 +361,11 @@ public class App {
 		tx.commit();
 		
 		em.close();
+		
+		/**
+		 * Yeah... I should have put everything between begin() and commit(). Right now if we unexpectatly shut down at 243,
+		 * then the user would have lost all his tudoos and tudooGroups, but the user itself would still be in the DB. Haha, unlucky.
+		 */
 	}
 	
 	

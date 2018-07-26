@@ -8,6 +8,12 @@ import javax.persistence.Table;
 @Table
 public class User {
 	
+	/**
+	 * Id annotation. This attribute will be the PK in the table
+	 * Column name is automatically generated, unless it is annotated with @Table (name = userLoginName)
+	 * @GeneratedValue can be annotated to @Id. In this case, the PK will be automatically created by the database itself.
+	 * Generated PKs are incrementing IDs
+	 */
 	@Id
 	private String loginName;
 	private String password;
